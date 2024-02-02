@@ -1,6 +1,8 @@
+import React from "react";
+
 interface Props {
-    onChangeAlias: (value: string) => void;
-    onChangePswd: (value: string) => void;
+    setAlias: React.Dispatch<React.SetStateAction<string>>
+    setPassword: React.Dispatch<React.SetStateAction<string>>
 }
 
 const AuthenticationFields = (props: Props) => {
@@ -13,7 +15,7 @@ const AuthenticationFields = (props: Props) => {
                     size={50}
                     id="aliasInput"
                     placeholder="name@example.com"
-                    onChange={(event) => props.onChangeAlias(event.target.value)}
+                    onChange={(event) => props.setAlias(event.target.value)}
                 />
                 <label htmlFor="aliasInput">Alias</label>
             </div>
@@ -23,7 +25,7 @@ const AuthenticationFields = (props: Props) => {
                     className="form-control bottom"
                     id="passwordInput"
                     placeholder="Password"
-                    onChange={(event) => props.onChangePswd(event.target.value)}
+                    onChange={(event) => props.setPassword(event.target.value)}
                 />
                 <label htmlFor="passwordInput">Password</label>
             </div>

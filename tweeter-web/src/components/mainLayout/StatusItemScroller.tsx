@@ -6,6 +6,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { Link } from "react-router-dom";
 import Post from "../statusItem/Post";
 import useToastListener from "../toaster/ToastListenerHook";
+import useUserInfo from "../userInfo/UserInfoHook";
 
 export const PAGE_SIZE = 10;
 
@@ -33,8 +34,7 @@ const StatusItemScoller = (props: Props) => {
     const addItems = (newItems: Status[]) =>
         setItems([...itemsReference.current, ...newItems]);
 
-    const { displayedUser, setDisplayedUser, currentUser, authToken } =
-        useContext(UserInfoContext);
+    const { displayedUser, setDisplayedUser, currentUser, authToken } = useUserInfo();
 
     // Load initial items
     useEffect(() => {
