@@ -65,6 +65,7 @@ const Login = (props: Props) => {
       <AuthenticationFields
         setAlias = {setAlias}
         setPassword = {setPassword}
+        margin = {true}
       />
     );
   };

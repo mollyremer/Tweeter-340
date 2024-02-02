@@ -128,6 +128,7 @@ const Register = () => {
         <AuthenticationFields
           setAlias={setAlias}
           setPassword={setPassword}
+          margin={false}
         />
         <div className="form-floating mb-3">
           <input
