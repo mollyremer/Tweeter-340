@@ -4,8 +4,10 @@ import { UserService } from "../model/service/UserService";
 export interface UserInfoView {
     setIsFollower: React.Dispatch<React.SetStateAction<boolean>>;
     displayErrorMessage: (message: string, bootstrapClasses?: string | undefined) => void;
-    setFolloweesCount: React.Dispatch<React.SetStateAction<number>>
-    setFollowersCount: React.Dispatch<React.SetStateAction<number>>
+    displayInfoMessage: (message: string, duration: number, bootstrapClasses?: string | undefined) => void;
+    setFolloweesCount: React.Dispatch<React.SetStateAction<number>>;
+    setFollowersCount: React.Dispatch<React.SetStateAction<number>>;
+    clearLastInfoMessage: () => void;
 }
 
 export class UserInfoPresenter {
@@ -63,7 +65,7 @@ export class UserInfoPresenter {
         }
     };
 
-    public async follow (
+    public async follow(
         authToken: AuthToken,
         userToFollow: User
     ): Promise<[followersCount: number, followeesCount: number]> {
@@ -78,7 +80,7 @@ export class UserInfoPresenter {
         return [followersCount, followeesCount];
     };
 
-    public async unfollow (
+    public async unfollow(
         authToken: AuthToken,
         userToUnfollow: User
     ): Promise<[followersCount: number, followeesCount: number]> {
@@ -91,5 +93,64 @@ export class UserInfoPresenter {
         let followeesCount = await this.service.getFolloweesCount(authToken, userToUnfollow);
 
         return [followersCount, followeesCount];
+    };
+
+    //TODO: Move to mvp
+    public async followDisplayedUser (
+        event: React.MouseEvent,
+        displayedUser: User | null,
+        authToken: AuthToken | null
+    ): Promise<void> {
+        event.preventDefault();
+
+        try {
+            this.view.displayInfoMessage(`Adding ${displayedUser!.name} to followers...`, 0);
+
+            let [followersCount, followeesCount] = await this.follow(
+                authToken!,
+                displayedUser!
+            );
+
+            this.view.clearLastInfoMessage();
+
+            this.view.setIsFollower(true);
+            this.view.setFollowersCount(followersCount);
+            this.view.setFolloweesCount(followeesCount);
+        } catch (error) {
+            this.view.displayErrorMessage(
+                `Failed to follow user because of exception: ${error}`
+            );
+        }
+    };
+
+    //TODO: Move to mvp
+    public async unfollowDisplayedUser (
+        event: React.MouseEvent,
+        displayedUser: User | null,
+        authToken: AuthToken | null
+    ): Promise<void> {
+        event.preventDefault();
+
+        try {
+            this.view.displayInfoMessage(
+                `Removing ${displayedUser!.name} from followers...`,
+                0
+            );
+
+            let [followersCount, followeesCount] = await this.unfollow(
+                authToken!,
+                displayedUser!
+            );
+
+            this.view.clearLastInfoMessage();
+
+            this.view.setIsFollower(false);
+            this.view.setFollowersCount(followersCount);
+            this.view.setFolloweesCount(followeesCount);
+        } catch (error) {
+            this.view.displayErrorMessage(
+                `Failed to unfollow user because of exception: ${error}`
+            );
+        }
     };
 }

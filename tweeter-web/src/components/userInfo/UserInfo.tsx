@@ -17,8 +17,10 @@ const UserInfo = () => {
   const listener: UserInfoView = {
     setIsFollower: setIsFollower,
     displayErrorMessage: displayErrorMessage,
+    displayInfoMessage: displayInfoMessage,
     setFolloweesCount: setFolloweesCount,
-    setFollowersCount: setFollowersCount
+    setFollowersCount: setFollowersCount,
+    clearLastInfoMessage: clearLastInfoMessage
   }
 
   const [presenter] = useState(new UserInfoPresenter(listener));
@@ -38,58 +40,60 @@ const UserInfo = () => {
     setDisplayedUser(currentUser!);
   };
 
-  const followDisplayedUser = async (
-    event: React.MouseEvent
-  ): Promise<void> => {
-    event.preventDefault();
+  // //TODO: Move to mvp
+  // const followDisplayedUser = async (
+  //   event: React.MouseEvent
+  // ): Promise<void> => {
+  //   event.preventDefault();
 
-    try {
-      displayInfoMessage(`Adding ${displayedUser!.name} to followers...`, 0);
+  //   try {
+  //     displayInfoMessage(`Adding ${displayedUser!.name} to followers...`, 0);
 
-      let [followersCount, followeesCount] = await presenter.follow(
-        authToken!,
-        displayedUser!
-      );
+  //     let [followersCount, followeesCount] = await presenter.follow(
+  //       authToken!,
+  //       displayedUser!
+  //     );
 
-      clearLastInfoMessage();
+  //     clearLastInfoMessage();
 
-      setIsFollower(true);
-      setFollowersCount(followersCount);
-      setFolloweesCount(followeesCount);
-    } catch (error) {
-      displayErrorMessage(
-        `Failed to follow user because of exception: ${error}`
-      );
-    }
-  };
+  //     setIsFollower(true);
+  //     setFollowersCount(followersCount);
+  //     setFolloweesCount(followeesCount);
+  //   } catch (error) {
+  //     displayErrorMessage(
+  //       `Failed to follow user because of exception: ${error}`
+  //     );
+  //   }
+  // };
 
-  const unfollowDisplayedUser = async (
-    event: React.MouseEvent
-  ): Promise<void> => {
-    event.preventDefault();
+  // //TODO: Move to mvp
+  // const unfollowDisplayedUser = async (
+  //   event: React.MouseEvent
+  // ): Promise<void> => {
+  //   event.preventDefault();
 
-    try {
-      displayInfoMessage(
-        `Removing ${displayedUser!.name} from followers...`,
-        0
-      );
+  //   try {
+  //     displayInfoMessage(
+  //       `Removing ${displayedUser!.name} from followers...`,
+  //       0
+  //     );
 
-      let [followersCount, followeesCount] = await presenter.unfollow(
-        authToken!,
-        displayedUser!
-      );
+  //     let [followersCount, followeesCount] = await presenter.unfollow(
+  //       authToken!,
+  //       displayedUser!
+  //     );
 
-      clearLastInfoMessage();
+  //     clearLastInfoMessage();
 
-      setIsFollower(false);
-      setFollowersCount(followersCount);
-      setFolloweesCount(followeesCount);
-    } catch (error) {
-      displayErrorMessage(
-        `Failed to unfollow user because of exception: ${error}`
-      );
-    }
-  };
+  //     setIsFollower(false);
+  //     setFollowersCount(followersCount);
+  //     setFolloweesCount(followeesCount);
+  //   } catch (error) {
+  //     displayErrorMessage(
+  //       `Failed to unfollow user because of exception: ${error}`
+  //     );
+  //   }
+  // };
 
   return (
     <>
@@ -137,7 +141,7 @@ const UserInfo = () => {
                       id="unFollowButton"
                       className="btn btn-md btn-secondary me-1"
                       type="submit"
-                      onClick={(event) => unfollowDisplayedUser(event)}
+                      onClick={(event) => presenter.unfollowDisplayedUser(event, displayedUser, authToken)}
                     >
                       Unfollow
                     </button>
@@ -146,7 +150,7 @@ const UserInfo = () => {
                       id="followButton"
                       className="btn btn-md btn-primary me-1"
                       type="submit"
-                      onClick={(event) => followDisplayedUser(event)}
+                      onClick={(event) => presenter.followDisplayedUser(event, displayedUser, authToken)}
                     >
                       Follow
                     </button>
