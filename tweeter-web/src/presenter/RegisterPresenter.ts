@@ -1,20 +1,23 @@
 import { NavigateFunction } from "react-router-dom";
 import { UserService } from "../model/service/UserService"
 import { User, AuthToken } from "tweeter-shared";
+import { Presenter, View } from "./Presenter";
 
-export interface RegisterView {
+export interface RegisterView extends View {
     updateUserInfo: (currentUser: User, authToken: AuthToken) => void
     navigate: NavigateFunction,
-    displayErrorMessage: (message: string, bootstrapClasses?: string | undefined) => void
 }
 
-export class RegisterPresenter {
-    private view: RegisterView;
+export class RegisterPresenter extends Presenter {
     private service: UserService;
 
     constructor(view: RegisterView) {
-        this.view = view;
-        this.service = new UserService
+        super(view);
+        this.service = new UserService;
+    }
+
+    protected get view(): RegisterView {
+        return super.view as RegisterView;
     }
 
     public firstName = "";
@@ -24,7 +27,7 @@ export class RegisterPresenter {
     public imageBytes = <Uint8Array>(new Uint8Array);
 
     public async doRegister() {
-        try {
+        this.doFailureReportingOperation(async () => {
             let [user, authToken] = await this.service.register(
                 this.firstName,
                 this.lastName,
@@ -35,10 +38,6 @@ export class RegisterPresenter {
 
             this.view.updateUserInfo(user, authToken);
             this.view.navigate("/");
-        } catch (error) {
-           this.view.displayErrorMessage(
-                `Failed to register user because of exception: ${error}`
-            );
-        }
+        }, "register user")
     };
 }

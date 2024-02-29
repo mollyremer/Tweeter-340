@@ -1,11 +1,10 @@
 export interface View {
-    displayErrorMessage: (message: string) => void,
+    displayErrorMessage: (message: string, bootstrapClasses?: string | undefined) => void,
 }
 
-export interface MessageInfoView {
-    //displayErrorMessage: (message: string) => void,
-    displayInfoMessage: (message: string, duration: number, bootstrapClasses?: string | undefined) => void;
+export interface MessageInfoView extends View{
     clearLastInfoMessage: () => void;
+    displayInfoMessage: (message: string, duration: number, bootstrapClasses?: string | undefined) => void;
 }
 
 export class Presenter {
