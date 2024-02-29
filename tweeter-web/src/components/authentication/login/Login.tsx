@@ -1,7 +1,7 @@
 import "./Login.css";
 import "bootstrap/dist/css/bootstrap.css";
 import { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthenticationFormLayout from "../AuthenticationFormLayout";
 import useToastListener from "../../toaster/ToastListenerHook";
 import AuthenticationFields from "../AuthenticationFields";
@@ -29,14 +29,14 @@ const Login = (props: Props) => {
 
   const listener: LoginView = {
     updateUserInfo: (user, authtoken) => updateUserInfo(user, user, authtoken, rememberMeRef.current),
-    originalUrl: props.originalUrl,
     displayErrorMessage: displayErrorMessage,
+    navigate: useNavigate(),
   }
 
   const [presenter] = useState(new LoginPresenter(listener));
 
   const doLogin = async () => {
-    presenter.doLogin();
+    presenter.login(alias, password, props.originalUrl);
   }
 
   const inputFieldGenerator = () => {
