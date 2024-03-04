@@ -17,9 +17,9 @@ export class RegisterPresenter extends AuthenticatePresenter {
         this.view.navigate("/");
     }
 
-    public handleImageFile(file: File | undefined, imageURL: string, imageBytes: Uint8Array){
+    public handleImageFile(file: File | undefined, setImageURL: (url: string) => void, setImageBytes: (bytes: Uint8Array) => void){
         if (file) {
-          imageURL = URL.createObjectURL(file);
+          setImageURL(URL.createObjectURL(file));
     
           const reader = new FileReader();
           reader.onload = (event: ProgressEvent<FileReader>) => {
@@ -34,12 +34,12 @@ export class RegisterPresenter extends AuthenticatePresenter {
               "base64"
             );
     
-            imageBytes = bytes;
+            setImageBytes(bytes);
           };
           reader.readAsDataURL(file);
         } else {
-          imageURL = "";
-          imageBytes = new Uint8Array();
+          setImageURL("");
+          setImageBytes(new Uint8Array());
         }
       };
 

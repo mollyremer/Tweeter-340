@@ -15,8 +15,8 @@ const Register = () => {
   const [lastName, setLastName] = useState("");
   const [alias, setAlias] = useState("");
   const [password, setPassword] = useState("");
-  const [imageBytes] = useState<Uint8Array>(new Uint8Array());
-  const [imageUrl] = useState<string>("");
+  const [imageBytes, setImageBytes] = useState<Uint8Array>(new Uint8Array());
+  const [imageUrl, setImageUrl] = useState<string>("");
   const [rememberMe, setRememberMe] = useState(false);
 
   const rememberMeRef = useRef(rememberMe);
@@ -29,7 +29,7 @@ const Register = () => {
   const listener: AuthenticateView = {
     updateUserInfo: (user, authToken) => updateUserInfo(user, user, authToken, rememberMeRef.current),
     navigate: navigate,
-    displayErrorMessage: displayErrorMessage
+    displayErrorMessage: displayErrorMessage,
   }
 
   const [presenter] = useState(new RegisterPresenter(listener));
@@ -44,7 +44,7 @@ const Register = () => {
   };
 
   const handleImageFile = (file: File | undefined) => {
-    presenter.handleImageFile(file, imageUrl, imageBytes);
+    presenter.handleImageFile(file, setImageUrl, setImageBytes);
   };
 
   const doRegister = async () => {
