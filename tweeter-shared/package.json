@@ -9,7 +9,8 @@
     "build": "vite build && npm run compile",
     "preview": "vite preview",
     "compile": "npm run clean && tsc",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "test": "jest"
   },
   "devDependencies": {
     "typescript": "^5.0.2",
@@ -20,5 +21,20 @@
     "moment": "^2.29.4",
     "uuid": "^9.0.0",
     "vite-plugin-dts": "^3.3.1"
+  },
+  "jest": {
+    "verbose": true,
+    "testEnvironment": "jsdom",
+    "moduleNameMapper": {
+      "\\.(css|less)$": "<rootDir>/test/__mocks__/styleMock.js"
+    },
+    "testMatch": [
+      "<rootDir>/test/**/*.test.tsx",
+      "<rootDir>/test/**/*.test.ts"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest",
+      "\\.js$": "babel-jest"
+    }
   }
 }
