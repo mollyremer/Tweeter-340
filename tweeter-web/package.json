@@ -26,7 +26,8 @@
     "start": "vite",
     "build": "tsc && vite build",
     "serve": "vite preview",
-    "reload": "npm run build && npm run serve"
+    "reload": "npm run build && npm run serve",
+    "test": "jest"
   },
   "eslintConfig": {
     "extends": [
@@ -65,5 +66,20 @@
     "vite": "^4.3.9",
     "vite-plugin-svgr": "^3.2.0",
     "vite-tsconfig-paths": "^4.2.0"
-  }
+  },
+  "jest": {
+    "verbose": true,
+    "testEnvironment": "jsdom",
+    "moduleNameMapper": {
+      "\\.(css|less)$": "<rootDir>/test/__mocks__/styleMock.js"
+    },
+    "testMatch": [
+      "<rootDir>/test/**/*.test.tsx",
+      "<rootDir>/test/**/*.test.ts"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest",
+      "\\.js$": "babel-jest"
+    }
+  }  
 }
