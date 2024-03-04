@@ -10,7 +10,7 @@ interface Props {
     presenterGenerator: (view: StatusItemView) => StatusItemPresenter;
 }
 
-const StatusItemScoller = (props: Props) => {
+const StatusItemScroller = (props: Props) => {
     const { displayErrorMessage } = useToastListener();
     const [items, setItems] = useState<Status[]>([]);
 
@@ -39,8 +39,6 @@ const StatusItemScoller = (props: Props) => {
         presenter.loadMoreItems(authToken!, displayedUser!);
     };
 
-    // const { navigateToUser } = useUserNavigation();
-
     return (
         <div className="container px-0 overflow-visible vh-100">
             <InfiniteScroll
@@ -63,4 +61,4 @@ const StatusItemScoller = (props: Props) => {
     );
 };
 
-export default StatusItemScoller;
+export default StatusItemScroller;

@@ -7,7 +7,8 @@ import { Buffer } from "buffer";
 import useToastListener from "../../toaster/ToastListenerHook";
 import AuthenticationFields from "../AuthenticationFields";
 import useUserInfo from "../../userInfo/UserInfoHook";
-import { RegisterPresenter, RegisterView } from "../../../presenter/RegisterPresenter";
+import { RegisterPresenter } from "../../../presenter/RegisterPresenter";
+import { AuthenticateView } from "../../../presenter/AuthenticatePresenter";
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
@@ -25,7 +26,7 @@ const Register = () => {
   const { updateUserInfo } = useUserInfo();
   const { displayErrorMessage } = useToastListener();
 
-  const listener: RegisterView = {
+  const listener: AuthenticateView = {
     updateUserInfo: (user, authToken) => updateUserInfo(user, user, authToken, rememberMeRef.current),
     navigate: navigate,
     displayErrorMessage: displayErrorMessage
@@ -69,7 +70,7 @@ const Register = () => {
   };
 
   const doRegister = async () => {
-    presenter.doRegister();
+    presenter.doRegister(alias, password, firstName, lastName, imageBytes);
   };
 
   const inputFieldGenerator = () => {

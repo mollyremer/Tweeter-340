@@ -1,43 +1,19 @@
-import { NavigateFunction } from "react-router-dom";
-import { UserService } from "../model/service/UserService"
-import { User, AuthToken } from "tweeter-shared";
-import { Presenter, View } from "./Presenter";
+import { AuthenticatePresenter, AuthenticateView } from "./AuthenticatePresenter";
 
-export interface RegisterView extends View {
-    updateUserInfo: (currentUser: User, authToken: AuthToken) => void
-    navigate: NavigateFunction,
-}
-
-export class RegisterPresenter extends Presenter {
-    private service: UserService;
-
-    constructor(view: RegisterView) {
+export class RegisterPresenter extends AuthenticatePresenter {
+    constructor(view: AuthenticateView) {
         super(view);
-        this.service = new UserService;
     }
 
-    protected get view(): RegisterView {
-        return super.view as RegisterView;
-    }
-
-    public firstName = "";
-    public lastName = "";
-    public alias = "";
-    public password = "";
-    public imageBytes = <Uint8Array>(new Uint8Array);
-
-    public async doRegister() {
-        this.doFailureReportingOperation(async () => {
-            let [user, authToken] = await this.service.register(
-                this.firstName,
-                this.lastName,
-                this.alias,
-                this.password,
-                this.imageBytes
-            );
-
-            this.view.updateUserInfo(user, authToken);
-            this.view.navigate("/");
-        }, "register user")
+    public async doRegister(alias: string, password: string, firstName: string, lastName: string, imageBytes: Uint8Array) {
+        this.doAuthenticationOperation(
+            async () => { return this.service.register(firstName, lastName, alias, password, imageBytes) },
+            "register user",
+            undefined);
     };
+
+    protected navigateTo(): void {
+        this.view.navigate("/");
+    }
+
 }
