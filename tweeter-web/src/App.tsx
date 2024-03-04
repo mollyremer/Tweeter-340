@@ -13,12 +13,12 @@ import Toaster from "./components/toaster/Toaster";
 import StatusItemScroller from "./components/mainLayout/StatusItemScroller";
 import UserItemScroller from "./components/mainLayout/UserItemScroller";
 import useUserInfo from "./components/userInfo/UserInfoHook";
-import { FollowingPresenter } from "./presenter/FollowingPresenter";
-import { UserItemView } from "./presenter/UserItemPresenter";
-import { FollowerPresenter } from "./presenter/FollowerPresenter";
-import { StoryPresenter } from "./presenter/StoryPresenter";
-import { StatusItemView } from "./presenter/StatusItemPresenter";
-import { FeedPresenter } from "./presenter/FeedPresenter";
+import { FollowingPresenter } from "./presenter/feedAndStory/FollowingPresenter";
+import { UserItemView } from "./presenter/feedAndStory/UserItemPresenter";
+import { FollowerPresenter } from "./presenter/feedAndStory/FollowerPresenter";
+import { StoryPresenter } from "./presenter/feedAndStory/StoryPresenter";
+import { StatusItemView } from "./presenter/feedAndStory/StatusItemPresenter";
+import { FeedPresenter } from "./presenter/feedAndStory/FeedPresenter";
 import { Status } from "tweeter-shared";
 import StatusItem from "./components/statusItem/StatusItem";
 
