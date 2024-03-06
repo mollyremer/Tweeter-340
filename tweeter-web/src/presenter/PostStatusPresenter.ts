@@ -22,14 +22,12 @@ export class PostStatusPresenter extends Presenter {
     return this._service;
   }
 
-  public post = "";
-
-  public async submitPost(authToken: AuthToken | null, currentUser: User | null) {
+  public async submitPost(authToken: AuthToken | null, currentUser: User | null, post: string) {
     // this.view.event.preventDefault();
     this.doFailureReportingOperation(async () => {
       this.view.displayInfoMessage("Posting status...", 0);
 
-      let status = new Status(this.post, currentUser!, Date.now());
+      let status = new Status(post, currentUser!, Date.now());
 
       await this.service.postStatus(authToken!, status);
 

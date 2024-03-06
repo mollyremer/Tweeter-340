@@ -25,19 +25,19 @@ describe("PostStatusPresenter", () => {
     });
 
     it("tells the view to display a posting status message", async () => {
-        await postStatusPresenter.submitPost(authToken, currentUser);
+        await postStatusPresenter.submitPost(authToken, currentUser, "");
         verify(mockPostStatusView.displayInfoMessage("Posting status...", 0)).once();
     });
 
     it("calls postStatus on the post status service with the correct status string and auth token", async () => {
-        await postStatusPresenter.submitPost(authToken, currentUser);
+        await postStatusPresenter.submitPost(authToken, currentUser, "");
         // let [capturedAuthToken, capturedStatus] = capture(mockUserService.postStatus).last();
         // console.log(capturedStatus.formattedDate);
         verify(mockUserService.postStatus(authToken, status));
     });
 
     it("tells the view to clear the last info message, clear the post, and display a status posted message", async () => {
-        await postStatusPresenter.submitPost(authToken, currentUser);
+        await postStatusPresenter.submitPost(authToken, currentUser, "");
         verify(mockPostStatusView.displayErrorMessage(anything())).never();
         verify(mockPostStatusView.clearLastInfoMessage()).once();
         verify(mockPostStatusView.clearPost()).once();
@@ -47,7 +47,7 @@ describe("PostStatusPresenter", () => {
     it("tells the view to display an error message and does not tell it to do the following: clear the last info message, clear the post, and display a status posted message", async () => {
         const error = new Error("An error occurred");
         when(mockUserService.postStatus(anything(), anything())).thenThrow(error);
-        await postStatusPresenter.submitPost(authToken, currentUser);
+        await postStatusPresenter.submitPost(authToken, currentUser, "");
 
         verify(mockPostStatusView.displayErrorMessage("Failed to post the status because of exception: An error occurred")).once();
         verify(mockPostStatusView.clearLastInfoMessage()).never();

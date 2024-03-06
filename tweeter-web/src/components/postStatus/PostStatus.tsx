@@ -5,7 +5,11 @@ import useToastListener from "../toaster/ToastListenerHook";
 import useUserInfo from "../userInfo/UserInfoHook";
 import { PostStatusPresenter, PostStatusView } from "../../presenter/PostStatusPresenter";
 
-const PostStatus = () => {
+interface Props {
+  presenter?: PostStatusPresenter;
+}
+
+const PostStatus = (props: Props) => {
   const { displayErrorMessage, displayInfoMessage, clearLastInfoMessage } =
     useToastListener();
 
@@ -16,21 +20,15 @@ const PostStatus = () => {
     displayInfoMessage: displayInfoMessage,
     clearLastInfoMessage: clearLastInfoMessage,
     displayErrorMessage: displayErrorMessage,
-    // clearPost: (event) => clearPost(event),
     clearPost: () => clearPost(),
   }
 
-  const [presenter] = useState(new PostStatusPresenter(listener));
+  const [presenter] = useState(props.presenter ?? new PostStatusPresenter(listener));
 
   const submitPost = async (event: React.MouseEvent) => {
     event.preventDefault();
-    presenter.submitPost(authToken, currentUser);
+    presenter.submitPost(authToken, currentUser, post);
   }
-
-  // const clearPost = (event: React.MouseEvent) => {
-  //   event.preventDefault();
-  //   setPost("");
-  // };
 
   const clearPost = () => {
     setPost("");
@@ -46,6 +44,7 @@ const PostStatus = () => {
         <textarea
           className="form-control"
           id="postStatusTextArea"
+          aria-label="textField"
           rows={10}
           placeholder="What's on your mind?"
           value={post}
@@ -59,6 +58,7 @@ const PostStatus = () => {
           id="postStatusButton"
           className="btn btn-md btn-primary me-1"
           type="button"
+          aria-label="postStatus"
           disabled={checkButtonStatus()}
           onClick={(event) => submitPost(event)}
         >
@@ -68,8 +68,8 @@ const PostStatus = () => {
           id="clearStatusButton"
           className="btn btn-md btn-secondary"
           type="button"
+          aria-label="clear"
           disabled={checkButtonStatus()}
-          // onClick={(event) => clearPost(event)}
           onClick={() => clearPost()}
         >
           Clear
