@@ -1,28 +1,31 @@
-import useUserInfo from "../components/userInfo/UserInfoHook";
 import { UserService } from "../model/service/UserService";
 import { AuthToken, Status, User } from "tweeter-shared";
 import { MessageInfoView, Presenter } from "./Presenter";
 
 export interface PostStatusView extends MessageInfoView {
-  clearPost: (event: React.MouseEvent) => void
+  clearPost: () => void;
 }
 
 export class PostStatusPresenter extends Presenter {
-  private service: UserService;
+  private _service: UserService;
 
   constructor(view: PostStatusView) {
     super(view);
-    this.service = new UserService;
+    this._service = new UserService;
   }
 
   protected get view(): PostStatusView {
     return super.view as PostStatusView;
   }
 
+  public get service(){
+    return this._service;
+  }
+
   public post = "";
 
-  public async submitPost(event: React.MouseEvent, authToken: AuthToken | null, currentUser: User | null) {
-    event.preventDefault();
+  public async submitPost(authToken: AuthToken | null, currentUser: User | null) {
+    // this.view.event.preventDefault();
     this.doFailureReportingOperation(async () => {
       this.view.displayInfoMessage("Posting status...", 0);
 
@@ -31,7 +34,7 @@ export class PostStatusPresenter extends Presenter {
       await this.service.postStatus(authToken!, status);
 
       this.view.clearLastInfoMessage();
-      this.view.clearPost(event);
+      this.view.clearPost();
       this.view.displayInfoMessage("Status posted!", 2000);
     }, "post the status");
   };

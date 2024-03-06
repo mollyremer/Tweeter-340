@@ -16,17 +16,23 @@ const PostStatus = () => {
     displayInfoMessage: displayInfoMessage,
     clearLastInfoMessage: clearLastInfoMessage,
     displayErrorMessage: displayErrorMessage,
-    clearPost: (event) => clearPost(event),
+    // clearPost: (event) => clearPost(event),
+    clearPost: () => clearPost(),
   }
 
   const [presenter] = useState(new PostStatusPresenter(listener));
 
   const submitPost = async (event: React.MouseEvent) => {
-    presenter.submitPost(event, authToken, currentUser);
+    event.preventDefault();
+    presenter.submitPost(authToken, currentUser);
   }
 
-  const clearPost = (event: React.MouseEvent) => {
-    event.preventDefault();
+  // const clearPost = (event: React.MouseEvent) => {
+  //   event.preventDefault();
+  //   setPost("");
+  // };
+
+  const clearPost = () => {
     setPost("");
   };
 
@@ -63,7 +69,8 @@ const PostStatus = () => {
           className="btn btn-md btn-secondary"
           type="button"
           disabled={checkButtonStatus()}
-          onClick={(event) => clearPost(event)}
+          // onClick={(event) => clearPost(event)}
+          onClick={() => clearPost()}
         >
           Clear
         </button>
