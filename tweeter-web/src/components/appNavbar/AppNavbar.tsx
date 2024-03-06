@@ -1,12 +1,12 @@
 import "./AppNavbar.css";
 import { Container, Nav, Navbar } from "react-bootstrap";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import Image from "react-bootstrap/Image";
 import { AuthToken } from "tweeter-shared";
 import useToastListener from "../toaster/ToastListenerHook";
 import useUserInfo from "../userInfo/UserInfoHook";
 import { useState } from "react";
-import { LogoutPresenter, LogoutView } from "../../presenter/LogoutPresenter";
+import { AppNavbarPresenter, AppNavbarView } from "../../presenter/AppNavbarPresenter";
 
 const AppNavbar = () => {
   const location = useLocation();
@@ -14,18 +14,18 @@ const AppNavbar = () => {
   const { displayInfoMessage, displayErrorMessage, clearLastInfoMessage } =
     useToastListener();
 
-  const listener: LogoutView = {
-    authToken: authToken,
+  const listener: AppNavbarView = {
+    //navigateToLogin: useNavigate,  ????
     clearUserInfo: clearUserInfo,
     clearLastInfoMessage: clearLastInfoMessage,
     displayInfoMessage: displayInfoMessage,
     displayErrorMessage: displayErrorMessage
   }
 
-  const [presenter] = useState(new LogoutPresenter(listener));
+  const [presenter] = useState(new AppNavbarPresenter(listener));
 
-  const logOut = async () => {
-    presenter.logOut();
+  const logout = async () => {
+    presenter.logout(authToken!);
   }
 
   return (
@@ -67,7 +67,7 @@ const AppNavbar = () => {
               <NavLink to="/followers">Followers</NavLink>
             </Nav.Item>
             <Nav.Item>
-              <NavLink id="logout" onClick={logOut} to={location.pathname}>
+              <NavLink id="logout" onClick={logout} to={location.pathname}>
                 Logout
               </NavLink>
             </Nav.Item>
