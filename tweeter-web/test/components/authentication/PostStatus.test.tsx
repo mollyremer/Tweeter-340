@@ -58,7 +58,7 @@ describe("PostStatus Componenet", () => {
 
         const text = "abc";
 
-        const { postStatusButton, clearStatusButton, textField, user} = getElements();
+        const { postStatusButton, clearStatusButton, textField, user} = getElements(mockPresenterInstance);
         
         await user.type(textField, text);
 
