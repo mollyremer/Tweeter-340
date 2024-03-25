@@ -16,10 +16,6 @@ jest.mock("../../../src/components/userInfo/UserInfoHook", () => ({
 }));
 
 
-// Both buttons are disabled when the text field is cleared.
-// The presenter's postStatus method is called with correct parameters when the Post Status button is pressed.
-
-
 describe("PostStatus Componenet", () => {
     const mockUser = mock<User>();
     const mockUserInstance = instance(mockUser);
@@ -68,9 +64,9 @@ describe("PostStatus Componenet", () => {
 
 const renderPostStatus = (presenter?: PostStatusPresenter) => {
     return render(
-        <MemoryRouter>
+        <>
             <PostStatus presenter={presenter} />
-        </MemoryRouter>
+        </>
     );
 };
 
