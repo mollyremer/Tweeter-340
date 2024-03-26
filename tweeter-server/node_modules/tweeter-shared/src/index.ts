@@ -13,4 +13,4 @@ export { TweeterRequest } from "./model/net/TweeterRequest";
 export { TweeterResponse } from "./model/net/TweeterResponse";
 export { LoginRequest } from "./model/net/TweeterRequest";
 export { AuthenticateResponse } from "./model/net/TweeterResponse";
-export { BadResponse } from "./model/net/TweeterResponse";
+// export { BadResponse } from "./model/net/TweeterResponse";
