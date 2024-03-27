@@ -1,4 +1,4 @@
-import { AuthToken, User, Status, FakeData, LoginRequest, AuthenticateResponse } from "tweeter-shared";
+import { AuthToken, User, Status, FakeData, LoginRequest, AuthenticateResponse, RegisterRequest } from "tweeter-shared";
 import { Buffer } from "buffer";
 import { ServerFacade } from "../net/ServerFacade";
 
@@ -63,11 +63,14 @@ export class UserService {
         userImageBytes: Uint8Array
     ): Promise<[User, AuthToken]> {
         // Not neded now, but will be needed when you make the request to the server in milestone 3
-        // let imageStringBase64: string =
+        let imageStringBase64: string =
         Buffer.from(userImageBytes).toString("base64");
 
         // TODO: Replace with the result of calling the server
-        let user = FakeData.instance.firstUser;
+        // let user = FakeData.instance.firstUser;
+        let response = this.server.register(new RegisterRequest(firstName, lastName, alias, password, userImageBytes));
+
+        let user = (await response).user
 
         if (user === null) {
             throw new Error("Invalid registration");

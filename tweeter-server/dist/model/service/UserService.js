@@ -12,12 +12,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const tweeter_shared_1 = require("tweeter-shared");
 class UserService {
-    login(alias, password) {
+    login(username, password) {
         return __awaiter(this, void 0, void 0, function* () {
             // TODO: Replace with the result of calling the server
             let user = tweeter_shared_1.FakeData.instance.firstUser;
             if (user === null) {
                 throw new Error("Invalid alias or password");
+            }
+            return [user, tweeter_shared_1.FakeData.instance.authToken];
+        });
+    }
+    ;
+    register(firstName, lastName, alias, password, userImageBytes) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Not neded now, but will be needed when you make the request to the server in milestone 3
+            let imageStringBase64 = Buffer.from(userImageBytes).toString("base64");
+            let user = tweeter_shared_1.FakeData.instance.firstUser;
+            if (user === null) {
+                throw new Error("Invalid registration");
             }
             return [user, tweeter_shared_1.FakeData.instance.authToken];
         });

@@ -14,7 +14,7 @@ const tweeter_shared_1 = require("tweeter-shared");
 const UserService_1 = require("../model/service/UserService");
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return new tweeter_shared_1.AuthenticateResponse(...yield new UserService_1.UserService().login(event.username, event.password), true);
+        return new tweeter_shared_1.AuthenticateResponse(...yield new UserService_1.UserService().register(event.firstName, event.lastName, event.alias, event.password, event.userImageBytes), true);
     }
     catch (error) {
         if (error instanceof Error) {
