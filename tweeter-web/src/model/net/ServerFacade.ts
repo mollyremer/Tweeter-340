@@ -9,7 +9,7 @@ export class ServerFacade {
 
   async login(request: LoginRequest): Promise<AuthenticateResponse> {
     // const endpoint = "/service/login";
-    const endpoint = "login";
+    const endpoint = "/login";
     const response: JSON = await this.clientCommunicator.doPost<LoginRequest>(request, endpoint);
 
     return AuthenticateResponse.fromJson(response);
