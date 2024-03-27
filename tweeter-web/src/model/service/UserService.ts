@@ -1,4 +1,4 @@
-import { AuthToken, User, Status, FakeData, LoginRequest, AuthenticateResponse, RegisterRequest } from "tweeter-shared";
+import { AuthToken, User, Status, FakeData, LoginRequest, AuthenticateResponse, RegisterRequest, GetUserRequest } from "tweeter-shared";
 import { Buffer } from "buffer";
 import { ServerFacade } from "../net/ServerFacade";
 
@@ -10,7 +10,14 @@ export class UserService {
         alias: string
     ): Promise<User | null> {
         // TODO: Replace with the result of calling server
-        return FakeData.instance.findUserByAlias(alias);
+        let response = this.server.getUser(new GetUserRequest(authToken, alias));
+
+        let user = (await response).user
+        if (user === null){
+            throw new Error("[Bad Request] Invalid alias or authtoken"); 
+        }
+
+        return user;
     };
 
     public async getIsFollowerStatus(
@@ -47,12 +54,13 @@ export class UserService {
         let response = this.server.login(new LoginRequest(alias, password))
 
         let user = (await response).user
+        let authToken = (await response).token
 
-        if (user === null) {
+        if ((user === null) || (authToken === null)) {
             throw new Error("Invalid alias or password");
         }
 
-        return [user, FakeData.instance.authToken];
+        return [user, authToken];
     };
 
     public async register(
@@ -71,12 +79,13 @@ export class UserService {
         let response = this.server.register(new RegisterRequest(firstName, lastName, alias, password, userImageBytes));
 
         let user = (await response).user
+        let authToken = (await response).token
 
-        if (user === null) {
-            throw new Error("Invalid registration");
+        if ((user === null) || (authToken === null)) {
+            throw new Error("[Bad Request] Invalid registration");
         }
 
-        return [user, FakeData.instance.authToken];
+        return [user, authToken];
     };
 
     public async logout(authToken: AuthToken): Promise<void> {

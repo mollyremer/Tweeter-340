@@ -1,43 +1,58 @@
-import { User, AuthToken, FakeData } from "tweeter-shared";
+import { User, AuthToken, FakeData, LoginRequest, RegisterRequest, LogoutRequest, GetUserRequest } from "tweeter-shared";
 
 export class UserService{
+
     public async login(
-        username: string,
-        password: string
+        request: LoginRequest
     ): Promise<[User, AuthToken]> {
-        // TODO: Replace with the result of calling the server
+        if (request !instanceof LoginRequest){
+            throw new Error("[Bad Request] Invalid alias or password");
+        }
+        
+        // check request
         let user = FakeData.instance.firstUser;
 
         if (user === null) {
-            throw new Error("Invalid alias or password");
+            throw new Error("[Internal Server Error] Invalid User");
         }
 
         return [user, FakeData.instance.authToken];
     };
 
     public async register(
-        firstName: string,
-        lastName: string,
-        alias: string,
-        password: string,
-        userImageBytes: Uint8Array
+        request: RegisterRequest
     ): Promise<[User, AuthToken]> {
-        // Not neded now, but will be needed when you make the request to the server in milestone 3
-        let imageStringBase64: string =
-        Buffer.from(userImageBytes).toString("base64");
+        if (request !instanceof RegisterRequest){
+            throw new Error("[Bad Request] Invalid alias or password");
+        }
 
         let user = FakeData.instance.firstUser;
 
         if (user === null) {
-            throw new Error("Invalid registration");
+            throw new Error("[Internal Server Error] Invalid User");
         }
 
         return [user, FakeData.instance.authToken];
     };
 
-    public async logout(authToken: AuthToken): Promise<void> {
+    public async logout(
+        request: LogoutRequest
+    ): Promise<void> {
+        if (request !instanceof LogoutRequest){
+            throw new Error("[Bad Request] Invalid authToken");
+        }
         // Pause so we can see the logging out message. Delete when the call to the server is implemented.
         await new Promise((res) => setTimeout(res, 1000));
+    };
+
+    public async getUser(
+        request: GetUserRequest
+    ): Promise<User | null> {
+        if (request !instanceof LogoutRequest){
+            throw new Error("[Bad Request] Invalid alias");
+        }
+        // TODO: Replace with the result of calling server
+        return FakeData.instance.findUserByAlias(request.alias);
     };
 }
 

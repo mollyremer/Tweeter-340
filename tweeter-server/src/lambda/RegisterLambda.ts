@@ -3,7 +3,7 @@ import { UserService } from "../model/service/UserService";
 
 export const handler = async (event: RegisterRequest): Promise<TweeterResponse> => {
     try {
-        return new AuthenticateResponse(...await new UserService().register(event.firstName, event.lastName, event.alias, event.password, event.userImageBytes), true);
+        return new AuthenticateResponse(...await new UserService().register(event), true);
     } catch (error) {
         if (error instanceof Error){
             return new AuthenticateResponse(null, null, false, error.message);

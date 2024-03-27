@@ -1,6 +1,3 @@
-
-
-
 export { Follow } from "./model/domain/Follow";
 export { PostSegment, Type } from "./model/domain/PostSegment";
 export { Status } from "./model/domain/Status";
@@ -16,4 +13,6 @@ export { LoginRequest } from "./model/net/TweeterRequest";
 export { AuthenticateResponse } from "./model/net/TweeterResponse";
 export { RegisterRequest } from "./model/net/TweeterRequest";
 export { LogoutRequest } from "./model/net/TweeterRequest";
+export { GetUserRequest } from "./model/net/TweeterRequest";
+export { GetUserResponse } from "./model/net/TweeterResponse";
 

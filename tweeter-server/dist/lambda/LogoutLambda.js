@@ -14,10 +14,7 @@ const tweeter_shared_1 = require("tweeter-shared");
 const UserService_1 = require("../model/service/UserService");
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (event.authToken instanceof tweeter_shared_1.AuthToken) {
-            throw new Error("Error: missing authtoken");
-        }
-        let logout = yield new UserService_1.UserService().logout(event.authToken);
+        let logout = yield new UserService_1.UserService().logout(event);
         return new tweeter_shared_1.TweeterResponse(true);
     }
     catch (error) {

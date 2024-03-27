@@ -1,9 +1,9 @@
-import { AuthenticateResponse, LoginRequest, LogoutRequest, RegisterRequest, TweeterResponse } from "tweeter-shared";
+import { AuthenticateResponse, LoginRequest, LogoutRequest, RegisterRequest, TweeterResponse, GetUserRequest, GetUserResponse } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 
 export class ServerFacade {
 
-  private SERVER_URL = "http://localhost:5173";
+  private SERVER_URL = "https://ys2u0tn8u8.execute-api.us-east-2.amazonaws.com/tweeter-dev";
 
   private clientCommunicator = new ClientCommunicator(this.SERVER_URL);
 
@@ -26,5 +26,12 @@ export class ServerFacade {
     const response: JSON = await this.clientCommunicator.doPost<LogoutRequest>(request, endpoint);
 
     return TweeterResponse.fromJson(response);
+  }
+
+  async getUser(request: GetUserRequest): Promise<GetUserResponse> {
+    const endpoint = "/getUser";
+    const response: JSON = await this.clientCommunicator.doPost<GetUserRequest>(request, endpoint);
+
+    return GetUserResponse.fromJson(response);
   }
 }

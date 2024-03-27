@@ -3,8 +3,7 @@ import { UserService } from "../model/service/UserService";
 
 export const handler = async (event: LogoutRequest): Promise<TweeterResponse> => {
     try {
-        if (event.authToken !instanceof AuthToken){ throw new Error("Error: missing authtoken")}
-        let logout = await new UserService().logout(event.authToken);
+        let logout = await new UserService().logout(event);
         return new TweeterResponse(true);
     } catch (error) {
         if (error instanceof Error){

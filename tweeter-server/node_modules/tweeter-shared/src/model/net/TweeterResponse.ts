@@ -34,6 +34,46 @@ export class TweeterResponse {
   }
 }
 
+export class GetUserResponse extends TweeterResponse {
+  private _user: User | null;
+
+  constructor(
+    user: User | null,
+    success: boolean,
+    message: string | null = null
+  ) {
+    super(success, message);
+    this._user = user;
+  }
+
+  get user() {
+    return this._user;
+  }
+
+  static fromJson(json: JSON): GetUserResponse {
+    interface GetUserResponseJson extends ResponseJson {
+      _user: JSON;
+    }
+
+    const jsonObject: GetUserResponseJson =
+      json as unknown as GetUserResponseJson;
+    const deserializedUser = User.fromJson(JSON.stringify(jsonObject._user));
+
+    if (deserializedUser === null) {
+      throw new Error(
+        "AuthenticateResponse, could not deserialize user with json:\n" +
+        JSON.stringify(jsonObject._user)
+      );
+    }
+
+    return new GetUserResponse(
+      deserializedUser,
+      jsonObject._success,
+      jsonObject._message
+    );
+  }
+}
+
 interface ResponseJson {
   _success: boolean;
   _message: string;
@@ -75,7 +115,7 @@ export class AuthenticateResponse extends TweeterResponse {
     if (deserializedUser === null) {
       throw new Error(
         "AuthenticateResponse, could not deserialize user with json:\n" +
-          JSON.stringify(jsonObject._user)
+        JSON.stringify(jsonObject._user)
       );
     }
 
@@ -86,7 +126,7 @@ export class AuthenticateResponse extends TweeterResponse {
     if (deserializedToken === null) {
       throw new Error(
         "AuthenticateResponse, could not deserialize token with json:\n" +
-          JSON.stringify(jsonObject._token)
+        JSON.stringify(jsonObject._token)
       );
     }
 

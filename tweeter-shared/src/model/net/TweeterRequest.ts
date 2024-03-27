@@ -3,6 +3,17 @@ import { User } from "../domain/User";
 
 export class TweeterRequest { }
 
+export class GetUserRequest extends TweeterRequest {
+    authToken: AuthToken;
+    alias: string;
+
+    constructor(authToken: AuthToken, alias: string){
+        super();
+        this.authToken = authToken;
+        this.alias = alias;
+    }
+}
+
 export class LogoutRequest extends TweeterRequest {
     authToken: AuthToken;
 

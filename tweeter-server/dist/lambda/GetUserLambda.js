@@ -14,14 +14,14 @@ const tweeter_shared_1 = require("tweeter-shared");
 const UserService_1 = require("../model/service/UserService");
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return new tweeter_shared_1.AuthenticateResponse(...yield new UserService_1.UserService().login(event), true);
+        return new tweeter_shared_1.GetUserResponse(yield new UserService_1.UserService().getUser(event), true);
     }
     catch (error) {
         if (error instanceof Error) {
-            return new tweeter_shared_1.AuthenticateResponse(null, null, false, error.message);
+            return new tweeter_shared_1.GetUserResponse(null, false, error.message);
         }
         else {
-            return new tweeter_shared_1.AuthenticateResponse(null, null, false);
+            return new tweeter_shared_1.GetUserResponse(null, false);
         }
     }
 });
