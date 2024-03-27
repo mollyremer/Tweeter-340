@@ -15,4 +15,5 @@ export { TweeterResponse } from "./model/net/TweeterResponse";
 export { LoginRequest } from "./model/net/TweeterRequest";
 export { AuthenticateResponse } from "./model/net/TweeterResponse";
 export { RegisterRequest } from "./model/net/TweeterRequest";
+export { LogoutRequest } from "./model/net/TweeterRequest";
 

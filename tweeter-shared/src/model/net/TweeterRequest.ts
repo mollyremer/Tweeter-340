@@ -1,6 +1,16 @@
+import { AuthToken } from "../domain/AuthToken";
 import { User } from "../domain/User";
 
 export class TweeterRequest { }
+
+export class LogoutRequest extends TweeterRequest {
+    authToken: AuthToken;
+
+    constructor(authToken: AuthToken){
+        super();
+        this.authToken = authToken;
+    }
+}
 
 export class LoginRequest extends TweeterRequest {
     username: string;

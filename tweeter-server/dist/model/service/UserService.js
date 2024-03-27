@@ -35,5 +35,12 @@ class UserService {
         });
     }
     ;
+    logout(authToken) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Pause so we can see the logging out message. Delete when the call to the server is implemented.
+            yield new Promise((res) => setTimeout(res, 1000));
+        });
+    }
+    ;
 }
 exports.UserService = UserService;
