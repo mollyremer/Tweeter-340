@@ -1,5 +1,11 @@
 import { AuthToken } from "../domain/AuthToken";
+import { Status } from "../domain/Status";
 import { User } from "../domain/User";
+
+interface ResponseJson {
+  _success: boolean;
+  _message: string;
+}
 
 export class TweeterResponse {
   private _success: boolean;
@@ -34,6 +40,238 @@ export class TweeterResponse {
   }
 }
 
+export class FollowResponse extends TweeterResponse {
+  private _authToken: AuthToken;
+  private _user: User;
+  private _pageSize: number;
+  private _lastItem: User | null;
+
+  constructor(
+    authToken: AuthToken,
+    user: User,
+    pageSize: number,
+    lastItem: User | null,
+    success: boolean,
+    message: string | null = null
+  ) {
+    super(success, message);
+    this._authToken = authToken;
+    this._user = user;
+    this._pageSize = pageSize;
+    this._lastItem = lastItem;
+  }
+
+  get authToken() {
+    return this._authToken;
+  }
+
+  get user() {
+    return this._user;
+  }
+
+  get pageSize() {
+    return this._pageSize;
+  }
+
+  get lastItem() {
+    return this._lastItem;
+  }
+
+  static fromJson(json: JSON): FollowResponse {
+    interface ResponseResponseJson extends ResponseJson {
+      _authToken: JSON
+      _user: JSON;
+      _pageSize: number;
+      _lastItem: JSON;
+    }
+
+    const jsonObject: ResponseResponseJson =
+      json as unknown as ResponseResponseJson;
+    const deserializedAuthToken = AuthToken.fromJson(JSON.stringify(jsonObject._authToken));
+
+    if (deserializedAuthToken === null) {
+      throw new Error(
+        "StatusOrStoryResponse, could not deserialize authToken with json:\n" +
+        JSON.stringify(jsonObject._authToken)
+      );
+    }
+    const deserializedUser = User.fromJson(JSON.stringify(jsonObject._user));
+
+    if (deserializedUser === null) {
+      throw new Error(
+        "StatusOrStoryResponse, could not deserialize user with json:\n" +
+        JSON.stringify(jsonObject._user)
+      );
+    }
+    const deserializedLastItem = User.fromJson(JSON.stringify(jsonObject._lastItem));
+
+    if (deserializedLastItem === null) {
+      throw new Error(
+        "StatusOrStoryResponse, could not deserialize item with json:\n" +
+        JSON.stringify(jsonObject._lastItem)
+      );
+    }
+
+    return new FollowResponse(
+      deserializedAuthToken,
+      deserializedUser,
+      jsonObject._pageSize,
+      deserializedLastItem,
+      jsonObject._success,
+      jsonObject._message
+    );
+  }
+
+}
+
+export class StatusResponse extends TweeterResponse {
+  private _authToken: AuthToken;
+  private _user: User;
+  private _pageSize: number;
+  private _lastItem: Status | null;
+
+  constructor(
+    authToken: AuthToken,
+    user: User,
+    pageSize: number,
+    lastItem: Status | null,
+    success: boolean,
+    message: string | null = null
+  ) {
+    super(success, message);
+    this._authToken = authToken;
+    this._user = user;
+    this._pageSize = pageSize;
+    this._lastItem = lastItem;
+  }
+
+  get authToken() {
+    return this._authToken;
+  }
+
+  get user() {
+    return this._user;
+  }
+
+  get pageSize() {
+    return this._pageSize;
+  }
+
+  get lastItem() {
+    return this._lastItem;
+  }
+
+  static fromJson(json: JSON): StatusResponse {
+    interface StatusResponseJson extends ResponseJson {
+      _authToken: JSON
+      _user: JSON;
+      _pageSize: number;
+      _lastItem: JSON;
+    }
+
+    const jsonObject: StatusResponseJson =
+      json as unknown as StatusResponseJson;
+    const deserializedAuthToken = AuthToken.fromJson(JSON.stringify(jsonObject._authToken));
+
+    if (deserializedAuthToken === null) {
+      throw new Error(
+        "StatusResponse, could not deserialize authToken with json:\n" +
+        JSON.stringify(jsonObject._authToken)
+      );
+    }
+    const deserializedUser = User.fromJson(JSON.stringify(jsonObject._user));
+
+    if (deserializedUser === null) {
+      throw new Error(
+        "StatusResponse, could not deserialize user with json:\n" +
+        JSON.stringify(jsonObject._user)
+      );
+    }
+    const deserializedLastItem = Status.fromJson(JSON.stringify(jsonObject._lastItem));
+
+    if (deserializedLastItem === null) {
+      throw new Error(
+        "StatusResponse, could not deserialize item with json:\n" +
+        JSON.stringify(jsonObject._lastItem)
+      );
+    }
+
+    return new StatusResponse(
+      deserializedAuthToken,
+      deserializedUser,
+      jsonObject._pageSize,
+      deserializedLastItem,
+      jsonObject._success,
+      jsonObject._message
+    );
+  }
+
+}
+
+export class GetCountResponse extends TweeterResponse {
+  private _count: number;
+
+  constructor(
+    count: number,
+    success: boolean,
+    message: string | null = null
+  ) {
+    super(success, message);
+    this._count = count;
+  }
+
+  get count() {
+    return this._count;
+  }
+
+  static fromJson(json: JSON): GetCountResponse {
+    interface GetCountResponseJson extends ResponseJson {
+      _count: number;
+    }
+
+    const jsonObject: GetCountResponseJson =
+      json as unknown as GetCountResponseJson;
+
+    return new GetCountResponse(
+      jsonObject._count,
+      jsonObject._success,
+      jsonObject._message
+    );
+  }
+}
+
+export class GetIsFollowerStatusResponse extends TweeterResponse {
+  private _isFollower: boolean;
+
+  constructor(
+    isFollower: boolean,
+    success: boolean,
+    message: string | null = null
+  ) {
+    super(success, message);
+    this._isFollower = isFollower;
+  }
+
+  get isFollower() {
+    return this._isFollower;
+  }
+
+  static fromJson(json: JSON): GetIsFollowerStatusResponse {
+    interface GetIsFollowerStatusResponseJson extends ResponseJson {
+      _isFollower: boolean;
+    }
+
+    const jsonObject: GetIsFollowerStatusResponseJson =
+      json as unknown as GetIsFollowerStatusResponseJson;
+
+    return new GetIsFollowerStatusResponse(
+      jsonObject._isFollower,
+      jsonObject._success,
+      jsonObject._message
+    );
+  }
+}
+
 export class GetUserResponse extends TweeterResponse {
   private _user: User | null;
 
@@ -61,7 +299,7 @@ export class GetUserResponse extends TweeterResponse {
 
     if (deserializedUser === null) {
       throw new Error(
-        "AuthenticateResponse, could not deserialize user with json:\n" +
+        "GetUserResponse, could not deserialize user with json:\n" +
         JSON.stringify(jsonObject._user)
       );
     }
@@ -72,11 +310,6 @@ export class GetUserResponse extends TweeterResponse {
       jsonObject._message
     );
   }
-}
-
-interface ResponseJson {
-  _success: boolean;
-  _message: string;
 }
 
 export class AuthenticateResponse extends TweeterResponse {

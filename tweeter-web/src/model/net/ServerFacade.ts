@@ -1,4 +1,4 @@
-import { AuthenticateResponse, LoginRequest, LogoutRequest, RegisterRequest, TweeterResponse, GetUserRequest, GetUserResponse } from "tweeter-shared";
+import { AuthenticateResponse, LoginRequest, LogoutRequest, RegisterRequest, TweeterResponse, GetUserRequest, GetUserResponse, GetIsFollowerStatusRequest, GetIsFollowerStatusResponse, GetFolloweesCountRequest, GetCountResponse, GetFollowerCountRequest, PostStatusRequest } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 
 export class ServerFacade {
@@ -34,4 +34,33 @@ export class ServerFacade {
 
     return GetUserResponse.fromJson(response);
   }
+
+  async getIsFollowerStatus(request: GetIsFollowerStatusRequest): Promise<GetIsFollowerStatusResponse> {
+    const endpoint = "/getIsFollowerStatus";
+    const response: JSON = await this.clientCommunicator.doPost<GetIsFollowerStatusRequest>(request, endpoint);
+
+    return GetIsFollowerStatusResponse.fromJson(response);
+  }
+
+  async getFolloweesCount(request: GetFolloweesCountRequest): Promise<GetCountResponse> {
+    const endpoint = "/getFolloweesCount";
+    const response: JSON = await this.clientCommunicator.doPost<GetFolloweesCountRequest>(request, endpoint);
+
+    return GetCountResponse.fromJson(response);
+  }
+
+  async getFollowerCount(request: GetFollowerCountRequest): Promise<GetCountResponse> {
+    const endpoint = "/getFolloweersCount";
+    const response: JSON = await this.clientCommunicator.doPost<GetFollowerCountRequest>(request, endpoint);
+
+    return GetCountResponse.fromJson(response);
+  }
+
+  async postStatus(request: PostStatusRequest): Promise<TweeterResponse> {
+    const endpoint = "/postStatus";
+    const response: JSON = await this.clientCommunicator.doPost<PostStatusRequest>(request, endpoint);
+
+    return TweeterResponse.fromJson(response);
+  }
+ 
 }

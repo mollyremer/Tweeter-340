@@ -15,4 +15,6 @@ export { RegisterRequest } from "./model/net/TweeterRequest";
 export { LogoutRequest } from "./model/net/TweeterRequest";
 export { GetUserRequest } from "./model/net/TweeterRequest";
 export { GetUserResponse } from "./model/net/TweeterResponse";
+export { GetFollowerCountRequest, GetFolloweesCountRequest, GetIsFollowerStatusRequest, PostStatusRequest } from "./model/net/TweeterRequest";
+export { GetCountResponse, GetIsFollowerStatusResponse } from "./model/net/TweeterResponse";
 

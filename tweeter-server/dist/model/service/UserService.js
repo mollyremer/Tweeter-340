@@ -17,12 +17,12 @@ class UserService {
             if (request instanceof tweeter_shared_1.LoginRequest) {
                 throw new Error("[Bad Request] Invalid alias or password");
             }
-            // check request
             let user = tweeter_shared_1.FakeData.instance.firstUser;
-            if (user === null) {
-                throw new Error("[Internal Server Error] Invalid User");
+            let authToken = tweeter_shared_1.FakeData.instance.authToken;
+            if ((user === null) || (authToken === null)) {
+                throw new Error("[Internal Server Error] Invalid user or authToken");
             }
-            return [user, tweeter_shared_1.FakeData.instance.authToken];
+            return [user, authToken];
         });
     }
     ;
@@ -32,10 +32,11 @@ class UserService {
                 throw new Error("[Bad Request] Invalid alias or password");
             }
             let user = tweeter_shared_1.FakeData.instance.firstUser;
-            if (user === null) {
-                throw new Error("[Internal Server Error] Invalid User");
+            let authToken = tweeter_shared_1.FakeData.instance.authToken;
+            if ((user === null) || (authToken === null)) {
+                throw new Error("[Internal Server Error] Invalid user or authToken");
             }
-            return [user, tweeter_shared_1.FakeData.instance.authToken];
+            return [user, authToken];
         });
     }
     ;
@@ -44,18 +45,56 @@ class UserService {
             if (request instanceof tweeter_shared_1.LogoutRequest) {
                 throw new Error("[Bad Request] Invalid authToken");
             }
-            // Pause so we can see the logging out message. Delete when the call to the server is implemented.
             yield new Promise((res) => setTimeout(res, 1000));
         });
     }
     ;
     getUser(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (request instanceof tweeter_shared_1.LogoutRequest) {
-                throw new Error("[Bad Request] Invalid alias");
+            // if (request !instanceof GetUserRequest){
+            //     throw new Error("[Bad Request] Invalid alias");
+            // }
+            let alias = tweeter_shared_1.FakeData.instance.findUserByAlias(request.alias);
+            if (alias === null) {
+                throw new Error("[Internal Server Error] Invalid alias");
             }
-            // TODO: Replace with the result of calling server
-            return tweeter_shared_1.FakeData.instance.findUserByAlias(request.alias);
+            return alias;
+        });
+    }
+    ;
+    getIsFollowerStatus(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (request instanceof tweeter_shared_1.GetIsFollowerStatusRequest) {
+                throw new Error("[Bad Request] Invalid authToken or user");
+            }
+            let isFollower = tweeter_shared_1.FakeData.instance.isFollower();
+            if (isFollower === null) {
+                throw new Error("[Internal Server Error] Unknown error in getIsFollowerStatus");
+            }
+            return isFollower;
+        });
+    }
+    ;
+    postStatus(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (request instanceof tweeter_shared_1.PostStatusRequest) {
+                throw new Error("[Bad Request] Invalid request");
+            }
+            yield new Promise((f) => setTimeout(f, 2000));
+        });
+    }
+    ;
+    getFollowerCount(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let count = tweeter_shared_1.FakeData.instance.getFollowersCount(request.user);
+            return count;
+        });
+    }
+    ;
+    getFolloweesCount(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let count = tweeter_shared_1.FakeData.instance.getFolloweesCount(request.user);
+            return count;
         });
     }
     ;

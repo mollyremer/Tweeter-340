@@ -1,4 +1,4 @@
-import { User, AuthToken, FakeData, LoginRequest, RegisterRequest, LogoutRequest, GetUserRequest } from "tweeter-shared";
+import { User, AuthToken, FakeData, LoginRequest, RegisterRequest, LogoutRequest, GetUserRequest, GetIsFollowerStatusRequest, GetFolloweesCountRequest, PostStatusRequest, GetFollowerCountRequest } from "tweeter-shared";
 
 export class UserService{
 
@@ -8,15 +8,15 @@ export class UserService{
         if (request !instanceof LoginRequest){
             throw new Error("[Bad Request] Invalid alias or password");
         }
-        
-        // check request
-        let user = FakeData.instance.firstUser;
 
-        if (user === null) {
-            throw new Error("[Internal Server Error] Invalid User");
+        let user = FakeData.instance.firstUser;
+        let authToken = FakeData.instance.authToken;
+
+        if ((user === null) || (authToken === null)) {
+            throw new Error("[Internal Server Error] Invalid user or authToken");
         }
 
-        return [user, FakeData.instance.authToken];
+        return [user, authToken];
     };
 
     public async register(
@@ -27,12 +27,13 @@ export class UserService{
         }
 
         let user = FakeData.instance.firstUser;
+        let authToken = FakeData.instance.authToken;
 
-        if (user === null) {
-            throw new Error("[Internal Server Error] Invalid User");
+        if ((user === null) || (authToken === null)) {
+            throw new Error("[Internal Server Error] Invalid user or authToken");
         }
 
-        return [user, FakeData.instance.authToken];
+        return [user, authToken];
     };
 
     public async logout(
@@ -41,19 +42,69 @@ export class UserService{
         if (request !instanceof LogoutRequest){
             throw new Error("[Bad Request] Invalid authToken");
         }
-        // Pause so we can see the logging out message. Delete when the call to the server is implemented.
+
         await new Promise((res) => setTimeout(res, 1000));
     };
 
     public async getUser(
         request: GetUserRequest
     ): Promise<User | null> {
-        if (request !instanceof LogoutRequest){
-            throw new Error("[Bad Request] Invalid alias");
+        // if (request !instanceof GetUserRequest){
+        //     throw new Error("[Bad Request] Invalid alias");
+        // }
+
+        let alias = FakeData.instance.findUserByAlias(request.alias);
+
+        if (alias === null){
+            throw new Error("[Internal Server Error] Invalid alias")
         }
-        // TODO: Replace with the result of calling server
-        return FakeData.instance.findUserByAlias(request.alias);
+
+        return alias;
     };
+
+    public async getIsFollowerStatus(
+        request: GetIsFollowerStatusRequest
+    ): Promise<boolean> {
+        if (request !instanceof GetIsFollowerStatusRequest){
+            throw new Error("[Bad Request] Invalid authToken or user");
+        }
+
+        let isFollower = FakeData.instance.isFollower();
+
+        if (isFollower === null){
+            throw new Error("[Internal Server Error] Unknown error in getIsFollowerStatus")
+        }
+
+        return isFollower;
+    };
+
+    public async postStatus(
+        request: PostStatusRequest
+    ): Promise<void> {
+        if (request !instanceof PostStatusRequest){
+            throw new Error("[Bad Request] Invalid request");
+        }
+
+        await new Promise((f) => setTimeout(f, 2000));
+    };
+
+    public async getFollowerCount(
+        request: GetFollowerCountRequest
+    ): Promise<number> {
+        
+        let count = FakeData.instance.getFollowersCount(request.user);
+        return count;
+    };
+
+    public async getFolloweesCount(
+        request: GetFolloweesCountRequest
+    ): Promise<number> {
+        let count = FakeData.instance.getFolloweesCount(request.user);
+        return count;
+    };
+
+    
 }
+
 
 
