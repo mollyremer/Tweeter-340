@@ -52,7 +52,7 @@ export class ServerFacade {
   }
 
   async getFollowerCount(request: GetFollowerCountRequest): Promise<GetCountResponse> {
-    const endpoint = "/getFolloweersCount";
+    const endpoint = "/getFollowersCount";
     const response: JSON = await this.clientCommunicator.doPost<GetFollowerCountRequest>(request, endpoint);
 
     return GetCountResponse.fromJson(response);
