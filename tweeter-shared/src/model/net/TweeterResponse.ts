@@ -40,83 +40,49 @@ export class TweeterResponse {
   }
 }
 
-export class FollowResponse extends TweeterResponse {
-  private _authToken: AuthToken;
-  private _user: User;
-  private _pageSize: number;
-  private _lastItem: User | null;
+export class GetPageOfUsersResponse extends TweeterResponse {
+  private _users: User[];
+  private _hasMorePages: boolean;
 
   constructor(
-    authToken: AuthToken,
-    user: User,
-    pageSize: number,
-    lastItem: User | null,
+    users: User[],
+    hasMorePages: boolean,
     success: boolean,
     message: string | null = null
   ) {
     super(success, message);
-    this._authToken = authToken;
-    this._user = user;
-    this._pageSize = pageSize;
-    this._lastItem = lastItem;
+    this._users = users;
+    this._hasMorePages = hasMorePages;
   }
 
-  get authToken() {
-    return this._authToken;
+  get users(){
+    return this._users;
   }
 
-  get user() {
-    return this._user;
+  get hasMorePages(){
+    return this._hasMorePages;
   }
 
-  get pageSize() {
-    return this._pageSize;
-  }
-
-  get lastItem() {
-    return this._lastItem;
-  }
-
-  static fromJson(json: JSON): FollowResponse {
-    interface ResponseResponseJson extends ResponseJson {
-      _authToken: JSON
-      _user: JSON;
-      _pageSize: number;
-      _lastItem: JSON;
+  static fromJson(json: JSON): GetPageOfUsersResponse {
+    interface GetPageOfUsersResponseJson extends ResponseJson {
+      _users: JSON[];
+      _hasMorePages: boolean
     }
 
-    const jsonObject: ResponseResponseJson =
-      json as unknown as ResponseResponseJson;
-    const deserializedAuthToken = AuthToken.fromJson(JSON.stringify(jsonObject._authToken));
+    const jsonObject: GetPageOfUsersResponseJson =
+      json as unknown as GetPageOfUsersResponseJson;
+    const deserializedUsers = jsonObject._users.map((user) => User.fromJson(JSON.stringify(user))); 
 
-    if (deserializedAuthToken === null) {
+    if (deserializedUsers === null) {
       throw new Error(
-        "StatusOrStoryResponse, could not deserialize authToken with json:\n" +
-        JSON.stringify(jsonObject._authToken)
-      );
-    }
-    const deserializedUser = User.fromJson(JSON.stringify(jsonObject._user));
-
-    if (deserializedUser === null) {
-      throw new Error(
-        "StatusOrStoryResponse, could not deserialize user with json:\n" +
-        JSON.stringify(jsonObject._user)
-      );
-    }
-    const deserializedLastItem = User.fromJson(JSON.stringify(jsonObject._lastItem));
-
-    if (deserializedLastItem === null) {
-      throw new Error(
-        "StatusOrStoryResponse, could not deserialize item with json:\n" +
-        JSON.stringify(jsonObject._lastItem)
+        "GetPageOfUsersResponse, could not deserialize users with json:\n" +
+        JSON.stringify(jsonObject._users)
       );
     }
 
-    return new FollowResponse(
-      deserializedAuthToken,
-      deserializedUser,
-      jsonObject._pageSize,
-      deserializedLastItem,
+    return new GetPageOfUsersResponse(
+      deserializedUsers.map((user) => user!),
+      jsonObject._hasMorePages,
       jsonObject._success,
       jsonObject._message
     );
@@ -124,83 +90,49 @@ export class FollowResponse extends TweeterResponse {
 
 }
 
-export class StatusResponse extends TweeterResponse {
-  private _authToken: AuthToken;
-  private _user: User;
-  private _pageSize: number;
-  private _lastItem: Status | null;
+export class GetPageOfStatusesResponse extends TweeterResponse {
+  private _statuses: Status[];
+  private _hasMorePages: boolean;
 
   constructor(
-    authToken: AuthToken,
-    user: User,
-    pageSize: number,
-    lastItem: Status | null,
+    statuses: Status[],
+    hasMorePages: boolean,
     success: boolean,
     message: string | null = null
   ) {
     super(success, message);
-    this._authToken = authToken;
-    this._user = user;
-    this._pageSize = pageSize;
-    this._lastItem = lastItem;
+    this._statuses = statuses;
+    this._hasMorePages = hasMorePages;
   }
 
-  get authToken() {
-    return this._authToken;
+  get statuses(){
+    return this._statuses;
   }
 
-  get user() {
-    return this._user;
+  get hasMorePages(){
+    return this._hasMorePages;
   }
 
-  get pageSize() {
-    return this._pageSize;
-  }
-
-  get lastItem() {
-    return this._lastItem;
-  }
-
-  static fromJson(json: JSON): StatusResponse {
-    interface StatusResponseJson extends ResponseJson {
-      _authToken: JSON
-      _user: JSON;
-      _pageSize: number;
-      _lastItem: JSON;
+  static fromJson(json: JSON): GetPageOfStatusesResponse {
+    interface GetPageOfStatusesResponseJson extends ResponseJson {
+      _statuses: JSON[];
+      _hasMorePages: boolean
     }
 
-    const jsonObject: StatusResponseJson =
-      json as unknown as StatusResponseJson;
-    const deserializedAuthToken = AuthToken.fromJson(JSON.stringify(jsonObject._authToken));
+    const jsonObject: GetPageOfStatusesResponseJson =
+      json as unknown as GetPageOfStatusesResponseJson;
+    const deserializedStatuses = jsonObject._statuses.map((status) => Status.fromJson(JSON.stringify(status))); 
 
-    if (deserializedAuthToken === null) {
+    if (deserializedStatuses === null) {
       throw new Error(
-        "StatusResponse, could not deserialize authToken with json:\n" +
-        JSON.stringify(jsonObject._authToken)
-      );
-    }
-    const deserializedUser = User.fromJson(JSON.stringify(jsonObject._user));
-
-    if (deserializedUser === null) {
-      throw new Error(
-        "StatusResponse, could not deserialize user with json:\n" +
-        JSON.stringify(jsonObject._user)
-      );
-    }
-    const deserializedLastItem = Status.fromJson(JSON.stringify(jsonObject._lastItem));
-
-    if (deserializedLastItem === null) {
-      throw new Error(
-        "StatusResponse, could not deserialize item with json:\n" +
-        JSON.stringify(jsonObject._lastItem)
+        "GetPageOfStatusesResponse, could not deserialize statuses with json:\n" +
+        JSON.stringify(jsonObject._statuses)
       );
     }
 
-    return new StatusResponse(
-      deserializedAuthToken,
-      deserializedUser,
-      jsonObject._pageSize,
-      deserializedLastItem,
+    return new GetPageOfStatusesResponse(
+      deserializedStatuses.map((status) => status!),
+      jsonObject._hasMorePages,
       jsonObject._success,
       jsonObject._message
     );

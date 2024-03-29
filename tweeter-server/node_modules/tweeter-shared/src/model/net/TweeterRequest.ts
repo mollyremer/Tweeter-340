@@ -4,7 +4,7 @@ import { Status } from "../domain/Status";
 
 export class TweeterRequest { }
 
-export class loadMoreFolloweesRequest extends TweeterRequest {
+export class loadMoreFollowsRequest extends TweeterRequest {
     authToken: AuthToken;
     user: User;
     pageSize: number;
@@ -19,37 +19,7 @@ export class loadMoreFolloweesRequest extends TweeterRequest {
     }
 } 
 
-export class loadMoreFollowersRequest extends TweeterRequest {
-    authToken: AuthToken;
-    user: User;
-    pageSize: number;
-    lastItem: User | null;
-
-    constructor(authToken: AuthToken, user: User, pageSize: number, lastItem: User | null){
-        super();
-        this.authToken = authToken;
-        this.user = user;
-        this.pageSize = pageSize;
-        this.lastItem = lastItem;
-    }
-} 
-
-export class loadMoreStoryItemsRequest extends TweeterRequest {
-    authToken: AuthToken;
-    user: User;
-    pageSize: number;
-    lastItem: Status | null;
-
-    constructor(authToken: AuthToken, user: User, pageSize: number, lastItem: Status | null){
-        super();
-        this.authToken = authToken;
-        this.user = user;
-        this.pageSize = pageSize;
-        this.lastItem = lastItem;
-    }
-}
-
-export class loadMoreFeedItemsRequest extends TweeterRequest {
+export class loadMoreStatusItemsRequest extends TweeterRequest {
     authToken: AuthToken;
     user: User;
     pageSize: number;

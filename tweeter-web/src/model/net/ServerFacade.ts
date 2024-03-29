@@ -1,5 +1,7 @@
 import { AuthenticateResponse, LoginRequest, LogoutRequest, RegisterRequest, TweeterResponse, GetUserRequest, GetUserResponse, GetIsFollowerStatusRequest, GetIsFollowerStatusResponse, GetFolloweesCountRequest, GetCountResponse, GetFollowerCountRequest, PostStatusRequest } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
+import { loadMoreFollowsRequest, loadMoreStatusItemsRequest } from "tweeter-shared/dist/model/net/TweeterRequest";
+import { GetPageOfStatusesResponse, GetPageOfUsersResponse } from "tweeter-shared/dist/model/net/TweeterResponse";
 
 export class ServerFacade {
 
@@ -62,5 +64,32 @@ export class ServerFacade {
 
     return TweeterResponse.fromJson(response);
   }
+
+  async loadMoreFeedItems(request: loadMoreStatusItemsRequest): Promise<GetPageOfStatusesResponse> {
+    const endpoint = "/loadMoreFeedItems";
+    const response: JSON = await this.clientCommunicator.doPost<loadMoreStatusItemsRequest>(request, endpoint);
+
+    return GetPageOfStatusesResponse.fromJson(response);
+  }
+
+  async loadMoreStoryItems(request: loadMoreStatusItemsRequest): Promise<GetPageOfStatusesResponse> {
+    const endpoint = "/loadMoreStoryItems";
+    const response: JSON = await this.clientCommunicator.doPost<loadMoreStatusItemsRequest>(request, endpoint);
+
+    return GetPageOfStatusesResponse.fromJson(response);
+  }
+
+  async loadMoreFollowers(request: loadMoreFollowsRequest): Promise<GetPageOfUsersResponse> {
+    const endpoint = "/loadMoreFollowers";
+    const response: JSON = await this.clientCommunicator.doPost<loadMoreFollowsRequest>(request, endpoint);
+
+    return GetPageOfUsersResponse.fromJson(response);
+  }
  
+  async loadMoreFollowees(request: loadMoreFollowsRequest): Promise<GetPageOfUsersResponse> {
+    const endpoint = "/loadMoreFollowees";
+    const response: JSON = await this.clientCommunicator.doPost<loadMoreFollowsRequest>(request, endpoint);
+
+    return GetPageOfUsersResponse.fromJson(response);
+  }
 }
