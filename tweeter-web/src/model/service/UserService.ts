@@ -5,6 +5,30 @@ import { ServerFacade } from "../net/ServerFacade";
 export class UserService {
     private server = new ServerFacade;
 
+    public async follow(
+        authToken: AuthToken,
+        userToFollow: User
+    ): Promise<[followersCount: number, followeesCount: number]> {
+        let followersCountResponse = await this.server.getFollowerCount(new GetFollowerCountRequest(authToken, userToFollow));
+        let followeesCountResponse = await this.server.getFolloweesCount(new GetFolloweesCountRequest(authToken, userToFollow));
+
+        let followersCount = followersCountResponse.count;
+        let followeesCount = followeesCountResponse.count;
+        return [followersCount, followeesCount];
+    };
+
+    public async unfollow(
+        authToken: AuthToken,
+        userToUnfollow: User
+    ): Promise<[followersCount: number, followeesCount: number]> {
+        let followersCountResponse = await this.server.getFollowerCount(new GetFollowerCountRequest(authToken, userToUnfollow));
+        let followeesCountResponse = await this.server.getFolloweesCount(new GetFolloweesCountRequest(authToken, userToUnfollow));
+
+        let followersCount = followersCountResponse.count;
+        let followeesCount = followeesCountResponse.count;
+        return [followersCount, followeesCount];
+    };
+
     public async getUser(
         authToken: AuthToken,
         alias: string

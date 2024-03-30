@@ -40,61 +40,6 @@ const UserInfo = () => {
     setDisplayedUser(currentUser!);
   };
 
-  // //TODO: Move to mvp
-  // const followDisplayedUser = async (
-  //   event: React.MouseEvent
-  // ): Promise<void> => {
-  //   event.preventDefault();
-
-  //   try {
-  //     displayInfoMessage(`Adding ${displayedUser!.name} to followers...`, 0);
-
-  //     let [followersCount, followeesCount] = await presenter.follow(
-  //       authToken!,
-  //       displayedUser!
-  //     );
-
-  //     clearLastInfoMessage();
-
-  //     setIsFollower(true);
-  //     setFollowersCount(followersCount);
-  //     setFolloweesCount(followeesCount);
-  //   } catch (error) {
-  //     displayErrorMessage(
-  //       `Failed to follow user because of exception: ${error}`
-  //     );
-  //   }
-  // };
-
-  // //TODO: Move to mvp
-  // const unfollowDisplayedUser = async (
-  //   event: React.MouseEvent
-  // ): Promise<void> => {
-  //   event.preventDefault();
-
-  //   try {
-  //     displayInfoMessage(
-  //       `Removing ${displayedUser!.name} from followers...`,
-  //       0
-  //     );
-
-  //     let [followersCount, followeesCount] = await presenter.unfollow(
-  //       authToken!,
-  //       displayedUser!
-  //     );
-
-  //     clearLastInfoMessage();
-
-  //     setIsFollower(false);
-  //     setFollowersCount(followersCount);
-  //     setFolloweesCount(followeesCount);
-  //   } catch (error) {
-  //     displayErrorMessage(
-  //       `Failed to unfollow user because of exception: ${error}`
-  //     );
-  //   }
-  // };
-
   return (
     <>
       {currentUser === null || displayedUser === null || authToken === null ? (

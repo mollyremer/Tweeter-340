@@ -54,36 +54,6 @@ export class UserInfoPresenter extends Presenter {
         }, "get followers count");
     };
 
-    public async follow(
-        authToken: AuthToken,
-        userToFollow: User
-    ): Promise<[followersCount: number, followeesCount: number]> {
-        // Pause so we can see the following message. Remove when connected to the server
-        await new Promise((f) => setTimeout(f, 2000));
-
-        // TODO: Call the server
-
-        let followersCount = await this.service.getFollowersCount(authToken, userToFollow);
-        let followeesCount = await this.service.getFolloweesCount(authToken, userToFollow);
-
-        return [followersCount, followeesCount];
-    };
-
-    public async unfollow(
-        authToken: AuthToken,
-        userToUnfollow: User
-    ): Promise<[followersCount: number, followeesCount: number]> {
-        // Pause so we can see the unfollowing message. Remove when connected to the server
-        await new Promise((f) => setTimeout(f, 2000));
-
-        // TODO: Call the server
-
-        let followersCount = await this.service.getFollowersCount(authToken, userToUnfollow);
-        let followeesCount = await this.service.getFolloweesCount(authToken, userToUnfollow);
-
-        return [followersCount, followeesCount];
-    };
-
     public async followDisplayedUser(
         event: React.MouseEvent,
         displayedUser: User | null,
@@ -93,7 +63,7 @@ export class UserInfoPresenter extends Presenter {
         this.doFailureReportingOperation(async () => {
             this.view.displayInfoMessage(`Adding ${displayedUser!.name} to followers...`, 0);
 
-            let [followersCount, followeesCount] = await this.follow(
+            let [followersCount, followeesCount] = await this.service.follow(
                 authToken!,
                 displayedUser!
             );
@@ -119,7 +89,7 @@ export class UserInfoPresenter extends Presenter {
                 0
             );
 
-            let [followersCount, followeesCount] = await this.unfollow(
+            let [followersCount, followeesCount] = await this.service.unfollow(
                 authToken!,
                 displayedUser!
             );

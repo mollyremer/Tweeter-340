@@ -40,6 +40,22 @@ export class TweeterResponse {
   }
 }
 
+export class FollowToggleResponse extends TweeterResponse {
+  private _followersCount: number;
+  private _followeesCount: number;
+
+  constructor(
+    followersCount: number,
+    followeesCount: number,
+    success: boolean,
+    message: string | null = null
+  ) {
+    super(success, message);
+    this._followeesCount = followeesCount;
+    this._followersCount = followersCount
+  }
+}
+
 export class GetPageOfUsersResponse extends TweeterResponse {
   private _users: User[];
   private _hasMorePages: boolean;
@@ -55,11 +71,11 @@ export class GetPageOfUsersResponse extends TweeterResponse {
     this._hasMorePages = hasMorePages;
   }
 
-  get users(){
+  get users() {
     return this._users;
   }
 
-  get hasMorePages(){
+  get hasMorePages() {
     return this._hasMorePages;
   }
 
@@ -71,7 +87,7 @@ export class GetPageOfUsersResponse extends TweeterResponse {
 
     const jsonObject: GetPageOfUsersResponseJson =
       json as unknown as GetPageOfUsersResponseJson;
-    const deserializedUsers = jsonObject._users.map((user) => User.fromJson(JSON.stringify(user))); 
+    const deserializedUsers = jsonObject._users.map((user) => User.fromJson(JSON.stringify(user)));
 
     if (deserializedUsers === null) {
       throw new Error(
@@ -105,11 +121,11 @@ export class GetPageOfStatusesResponse extends TweeterResponse {
     this._hasMorePages = hasMorePages;
   }
 
-  get statuses(){
+  get statuses() {
     return this._statuses;
   }
 
-  get hasMorePages(){
+  get hasMorePages() {
     return this._hasMorePages;
   }
 
@@ -121,7 +137,7 @@ export class GetPageOfStatusesResponse extends TweeterResponse {
 
     const jsonObject: GetPageOfStatusesResponseJson =
       json as unknown as GetPageOfStatusesResponseJson;
-    const deserializedStatuses = jsonObject._statuses.map((status) => Status.fromJson(JSON.stringify(status))); 
+    const deserializedStatuses = jsonObject._statuses.map((status) => Status.fromJson(JSON.stringify(status)));
 
     if (deserializedStatuses === null) {
       throw new Error(

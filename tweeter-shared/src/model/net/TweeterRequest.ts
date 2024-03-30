@@ -4,6 +4,17 @@ import { Status } from "../domain/Status";
 
 export class TweeterRequest { }
 
+export class followToggleRequest extends TweeterRequest {
+    authToken: AuthToken;
+    userToFollow: User;
+
+    constructor(authToken: AuthToken, userToFollow: User){
+        super();
+        this.authToken = authToken;
+        this.userToFollow = userToFollow;
+    }
+}
+
 export class loadMoreFollowsRequest extends TweeterRequest {
     authToken: AuthToken;
     user: User;

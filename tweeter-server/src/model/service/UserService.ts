@@ -1,6 +1,19 @@
-import { User, AuthToken, FakeData, LoginRequest, RegisterRequest, LogoutRequest, GetUserRequest, GetIsFollowerStatusRequest, GetFolloweesCountRequest, PostStatusRequest, GetFollowerCountRequest } from "tweeter-shared";
+import { User, AuthToken, FakeData, LoginRequest, RegisterRequest, LogoutRequest, GetUserRequest, GetIsFollowerStatusRequest, GetFolloweesCountRequest, PostStatusRequest, GetFollowerCountRequest, followToggleRequest } from "tweeter-shared";
 
 export class UserService{
+    public async follow(
+        request: followToggleRequest
+    ): Promise<void> {
+        await new Promise((f) => setTimeout(f, 2000));
+        return;
+    };
+
+    public async unfollow(
+        request: followToggleRequest
+    ): Promise<void> {
+        await new Promise((f) => setTimeout(f, 2000));
+        return;
+    };
 
     public async login(
         request: LoginRequest

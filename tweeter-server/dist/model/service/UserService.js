@@ -12,6 +12,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const tweeter_shared_1 = require("tweeter-shared");
 class UserService {
+    follow(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield new Promise((f) => setTimeout(f, 2000));
+            return;
+        });
+    }
+    ;
+    unfollow(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield new Promise((f) => setTimeout(f, 2000));
+            return;
+        });
+    }
+    ;
     login(request) {
         return __awaiter(this, void 0, void 0, function* () {
             if (request instanceof tweeter_shared_1.LoginRequest) {
