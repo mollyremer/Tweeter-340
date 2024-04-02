@@ -89,11 +89,10 @@ export class UserService {
         password: string,
         userImageBytes: Uint8Array
     ): Promise<[User, AuthToken]> {
-        // Not neded now, but will be needed when you make the request to the server in milestone 3 ??????
         let imageStringBase64: string =
         Buffer.from(userImageBytes).toString("base64");
 
-        let response = await this.server.register(new RegisterRequest(firstName, lastName, alias, password, userImageBytes));
+        let response = await this.server.register(new RegisterRequest(firstName, lastName, alias, password, imageStringBase64));
 
         let user = response.user;
         let authToken = response.token;

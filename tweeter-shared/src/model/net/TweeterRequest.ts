@@ -127,9 +127,9 @@ export class RegisterRequest extends TweeterRequest {
     lastName: string;
     alias: string;
     password: string;
-    userImageBytes: Uint8Array;
+    userImageBytes: string;
 
-    constructor(firstName: string, lastName: string, alias: string, password: string, userImageBytes: Uint8Array) {
+    constructor(firstName: string, lastName: string, alias: string, password: string, userImageBytes: string) {
         super();
         this.firstName = firstName;
         this.lastName = lastName;
