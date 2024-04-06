@@ -10,8 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "tweeter-shared": "file:../tweeter-shared",
+    "@aws-sdk/lib-dynamodb": "^3.549.0",
     "moment": "^2.29.4",
+    "ts-node": "^10.9.2",
+    "tweeter-shared": "file:../tweeter-shared",
     "uuid": "^9.0.0"
   }
 }
