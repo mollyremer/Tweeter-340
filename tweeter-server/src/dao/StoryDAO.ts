@@ -9,8 +9,9 @@ import {
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { Status } from "tweeter-shared";
 import { DataPage } from "./DataPage";
+import { StatusDAOInterface } from "./DAOInterfaces";
 
-export class StoryDAO {
+export class StoryDAO implements StatusDAOInterface{
     readonly tableName = "story";
     readonly indexName = "story-index";
     readonly authorAlias = "authorAlias";
@@ -19,7 +20,7 @@ export class StoryDAO {
 
     private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
 
-    async putStoryItem(status: Status, authorAlias: string): Promise <void> {
+    async put(status: Status, authorAlias: string): Promise <void> {
         const params = {
             TableName: this.tableName,
             Item: {
@@ -31,29 +32,29 @@ export class StoryDAO {
         await this.client.send(new PutCommand(params));
     }
 
-    async updateStoryItem(status: Status, authorAlias: string): Promise<void> {
-        await this.putStoryItem(status, authorAlias);
+    async update(status: Status, authorAlias: string): Promise<void> {
+        await this.put(status, authorAlias);
     }
 
-    async deleteStoryItem(status: Status, authorAlias: string): Promise<void> {
+    async delete(status: Status, authorAlias: string): Promise<void> {
         const params = {
             TableName: this.tableName,
-            Key: this.generateStoryKey(authorAlias, status.timestamp)
+            Key: this.generateKey(authorAlias, status.timestamp)
         };
         await this.client.send(new DeleteCommand(params));
     }
 
-    private generateStoryKey(authorAlias: string, timestamp: number){
+    private generateKey(authorAlias: string, timestamp: number){
         return {
             [this.authorAlias]: authorAlias,
             [this.tableName]: timestamp
         }
     }
 
-    async getStoryItem(status: Status, authorAlias: string): Promise<Status | undefined>{
+    async get(status: Status, authorAlias: string): Promise<Status | undefined>{
         const params = {
             TableName: this.tableName,
-            Key: this.generateStoryKey(authorAlias, status.timestamp),
+            Key: this.generateKey(authorAlias, status.timestamp),
         };
         const output = await this.client.send(new GetCommand(params));
         return output.Item == undefined
@@ -61,7 +62,7 @@ export class StoryDAO {
             : Status.fromJson(output.Item[this.jsonPost])!;
     }
 
-    async getPageOfStoryItems(authorAlias: string, pageSize: number): Promise<DataPage<Status>> {
+    async getPage(authorAlias: string, pageSize: number): Promise<DataPage<Status>> {
         const params = {
             KeyConditionExpression: this.authorAlias + " = :f",
             ExpressionAttributeValues: {

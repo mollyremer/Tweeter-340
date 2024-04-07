@@ -3,13 +3,12 @@ import {
     DynamoDBDocumentClient,
     GetCommand,
     PutCommand,
-    QueryCommand,
-    UpdateCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { AuthToken } from "tweeter-shared";
+import { AuthDAOInterface } from "./DAOInterfaces";
 
-export class AuthDAO {
+export class AuthDAO implements AuthDAOInterface{
     readonly tableName = "authToken";
     readonly token = "token";
     readonly timestamp = "timestamp";
@@ -17,7 +16,7 @@ export class AuthDAO {
 
     private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
 
-    async putAuth(password: string): Promise<void> {
+    async put(password: string): Promise<void> {
         let authToken: AuthToken = AuthToken.Generate();
         const params = {
             TableName: this.tableName,
@@ -30,10 +29,10 @@ export class AuthDAO {
         await this.client.send(new PutCommand(params));
     }
 
-    async getAuth(token: string): Promise<AuthToken | undefined> {
+    async get(token: string): Promise<AuthToken | undefined> {
         const params = {
             TableName: this.tableName,
-            Key: this.generateTokenItem(token),
+            Key: this.generateKey(token),
         };
         const output = await this.client.send(new GetCommand(params));
         return output.Item == undefined
@@ -44,15 +43,15 @@ export class AuthDAO {
             );
     }
 
-    async deleteAuth(token: string): Promise<void> {
+    async delete(token: string): Promise<void> {
         const params = {
             TableName: this.tableName,
-            Key: this.generateTokenItem(token)
+            Key: this.generateKey(token)
         };
         await this.client.send(new DeleteCommand(params));
     }
 
-    private generateTokenItem(token: string){
+    private generateKey(token: string){
         return {
             [this.token]: token
         }

@@ -8,8 +8,9 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { User } from "tweeter-shared";
+import { UserDAOInterface } from "./DAOInterfaces";
 
-export class UserDAO {
+export class UserDAO implements UserDAOInterface{
     readonly tableName = "user";
     readonly firstName = "firstName";
     readonly lastName = "lastName"
@@ -20,7 +21,7 @@ export class UserDAO {
 
     private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
 
-    async putUser(user: User, password: String): Promise<void> {
+    async put(user: User, password: String): Promise<void> {
         const params = {
             TableName: this.tableName,
             Item: {
@@ -34,10 +35,10 @@ export class UserDAO {
         await this.client.send(new PutCommand(params));
     }
 
-    async getUser(alias: string): Promise<User | undefined> {
+    async get(alias: string): Promise<User | undefined> {
         const params = {
             TableName: this.tableName,
-            Key: this.generateAlias(alias),
+            Key: this.generateKey(alias),
         };
         const output = await this.client.send(new GetCommand(params))
         return output.Item == undefined
@@ -50,7 +51,7 @@ export class UserDAO {
             );
     }
 
-    private generateAlias(alias: string) {
+    private generateKey(alias: string) {
         return {
             [this.alias]: alias
         }

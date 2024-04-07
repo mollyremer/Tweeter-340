@@ -3,14 +3,14 @@ import {
     DynamoDBDocumentClient,
     GetCommand,
     PutCommand,
-    QueryCommand,
-    UpdateCommand,
+    QueryCommand
 } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { Status } from "tweeter-shared";
 import { DataPage } from "./DataPage";
+import { StatusDAOInterface } from "./DAOInterfaces";
 
-export class FeedDAO {
+export class FeedDAO implements StatusDAOInterface{
     readonly tableName = "feed";
     readonly indexName = "feed-index";
     readonly followerAlias = "followerAlias";
@@ -19,7 +19,7 @@ export class FeedDAO {
 
     private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
 
-    async putFeedItem(status: Status, followerAlias: string): Promise <void> {
+    async put(status: Status, followerAlias: string): Promise<void> {
         const params = {
             TableName: this.tableName,
             Item: {
@@ -31,29 +31,29 @@ export class FeedDAO {
         await this.client.send(new PutCommand(params));
     }
 
-    async updateFeedItem(status: Status, followerAlias: string): Promise<void> {
-        await this.putFeedItem(status, followerAlias);
+    async update(status: Status, followerAlias: string): Promise<void> {
+        await this.put(status, followerAlias);
     }
 
-    async deleteFeedItem(status: Status, followerAlias: string): Promise<void> {
+    async delete(status: Status, followerAlias: string): Promise<void> {
         const params = {
             TableName: this.tableName,
-            Key: this.generateFeedKey(followerAlias, status.timestamp)
+            Key: this.generateKey(followerAlias, status.timestamp)
         };
         await this.client.send(new DeleteCommand(params));
     }
 
-    private generateFeedKey(followerAlias: string, timestamp: number){
+    private generateKey(followerAlias: string, timestamp: number) {
         return {
             [this.followerAlias]: followerAlias,
             [this.tableName]: timestamp
         }
     }
 
-    async getFeedItem(status: Status, followerAlias: string): Promise<Status | undefined>{
+    async get(status: Status, followerAlias: string): Promise<Status | undefined> {
         const params = {
             TableName: this.tableName,
-            Key: this.generateFeedKey(followerAlias, status.timestamp),
+            Key: this.generateKey(followerAlias, status.timestamp),
         };
         const output = await this.client.send(new GetCommand(params));
         return output.Item == undefined
@@ -61,7 +61,7 @@ export class FeedDAO {
             : Status.fromJson(output.Item[this.jsonPost])!;
     }
 
-    async getPageOfFeedItems(followerAlias: string, pageSize: number): Promise<DataPage<Status>> {
+    async getPage(followerAlias: string, pageSize: number): Promise<DataPage<Status>> {
         const params = {
             KeyConditionExpression: this.followerAlias + " = :f",
             ExpressionAttributeValues: {
@@ -74,12 +74,12 @@ export class FeedDAO {
         const items: Status[] = [];
         const data = await this.client.send(new QueryCommand(params));
         const hasMorePages = data.LastEvaluatedKey !== undefined;
-        data.Items?.forEach((item) => 
+        data.Items?.forEach((item) =>
             items.push(
                 Status.fromJson(this.jsonPost)!
             )
         )
         return new DataPage<Status>(items, hasMorePages);
     }
-    
+
 }

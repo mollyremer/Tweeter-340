@@ -9,9 +9,10 @@ import {
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { Follow, User } from "tweeter-shared";
 import { DataPage } from "./DataPage";
+import { FollowsDAOInterface } from "./DAOInterfaces";
 
 
-export class FollowsDAO {
+export class FollowsDAO implements FollowsDAOInterface{
     readonly tableName = "follows";
     readonly indexName = "follows_index";
     readonly followerHandle = "followerHandle";
@@ -21,7 +22,7 @@ export class FollowsDAO {
 
     private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
 
-    async putFollow(follow: Follow): Promise<void> {
+    async put(follow: Follow): Promise<void> {
         const params = {
             TableName: this.tableName,
             Item: {
@@ -34,29 +35,29 @@ export class FollowsDAO {
         await this.client.send(new PutCommand(params));
     }
 
-    async updateFollow(follow: Follow): Promise<void> {
-        await this.putFollow(follow);
+    async update(follow: Follow): Promise<void> {
+        await this.put(follow);
     }
 
-    async deleteFollow(follow: Follow): Promise<void> {
+    async delete(follow: Follow): Promise<void> {
         const params = {
             TableName: this.tableName,
-            Key: this.generateFollowItem(follow),
+            Key: this.generateKey(follow),
         };
         await this.client.send(new DeleteCommand(params));
     }
 
-    private generateFollowItem(follow: Follow) {
+    private generateKey(follow: Follow) {
         return {
             [this.followerHandle]: follow.follower.alias,
             [this.followeeHandle]: follow.followee.alias
         }
     }
 
-    async getFollow(follow: Follow): Promise<Follow | undefined> {
+    async get(follow: Follow): Promise<Follow | undefined> {
         const params = {
             TableName: this.tableName,
-            Key: this.generateFollowItem(follow),
+            Key: this.generateKey(follow),
         };
         const output = await this.client.send(new GetCommand(params));
         return output.Item == undefined
