@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StatusService = void 0;
 const tweeter_shared_1 = require("tweeter-shared");
+const TweeterRequest_1 = require("tweeter-shared/dist/model/net/TweeterRequest");
 class StatusService {
     loadMoreFeedItems(request) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -29,6 +30,15 @@ class StatusService {
                 throw new Error("[Internal Server Error] Invalid user or authToken");
             }
             return [statuses, hasMorePages];
+        });
+    }
+    ;
+    postStatus(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (request instanceof TweeterRequest_1.PostStatusRequest) {
+                throw new Error("[Bad Request] Invalid request");
+            }
+            yield new Promise((f) => setTimeout(f, 2000));
         });
     }
     ;

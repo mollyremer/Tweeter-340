@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FollowService = void 0;
 const tweeter_shared_1 = require("tweeter-shared");
+const TweeterRequest_1 = require("tweeter-shared/dist/model/net/TweeterRequest");
 class FollowService {
     loadMoreFollowers(request) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -29,6 +30,33 @@ class FollowService {
                 throw new Error("[Internal Server Error] Invalid user or authToken");
             }
             return [users, hasMorePages];
+        });
+    }
+    ;
+    follow(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield new Promise((f) => setTimeout(f, 2000));
+            return;
+        });
+    }
+    ;
+    unfollow(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield new Promise((f) => setTimeout(f, 2000));
+            return;
+        });
+    }
+    ;
+    getIsFollowerStatus(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (request instanceof TweeterRequest_1.GetIsFollowerStatusRequest) {
+                throw new Error("[Bad Request] Invalid authToken or user");
+            }
+            let isFollower = tweeter_shared_1.FakeData.instance.isFollower();
+            if (isFollower === null) {
+                throw new Error("[Internal Server Error] Unknown error in getIsFollowerStatus");
+            }
+            return isFollower;
         });
     }
     ;

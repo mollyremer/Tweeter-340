@@ -1,20 +1,6 @@
 import { User, AuthToken, FakeData, LoginRequest, RegisterRequest, LogoutRequest, GetUserRequest, GetIsFollowerStatusRequest, GetFolloweesCountRequest, PostStatusRequest, GetFollowerCountRequest, followToggleRequest } from "tweeter-shared";
 
 export class UserService{
-    public async follow(
-        request: followToggleRequest
-    ): Promise<void> {
-        await new Promise((f) => setTimeout(f, 2000));
-        return;
-    };
-
-    public async unfollow(
-        request: followToggleRequest
-    ): Promise<void> {
-        await new Promise((f) => setTimeout(f, 2000));
-        return;
-    };
-
     public async login(
         request: LoginRequest
     ): Promise<[User, AuthToken]> {
@@ -75,32 +61,6 @@ export class UserService{
         return alias;
     };
 
-    public async getIsFollowerStatus(
-        request: GetIsFollowerStatusRequest
-    ): Promise<boolean> {
-        if (request !instanceof GetIsFollowerStatusRequest){
-            throw new Error("[Bad Request] Invalid authToken or user");
-        }
-
-        let isFollower = FakeData.instance.isFollower();
-
-        if (isFollower === null){
-            throw new Error("[Internal Server Error] Unknown error in getIsFollowerStatus")
-        }
-
-        return isFollower;
-    };
-
-    public async postStatus(
-        request: PostStatusRequest
-    ): Promise<void> {
-        if (request !instanceof PostStatusRequest){
-            throw new Error("[Bad Request] Invalid request");
-        }
-
-        await new Promise((f) => setTimeout(f, 2000));
-    };
-
     public async getFollowerCount(
         request: GetFollowerCountRequest
     ): Promise<number> {
@@ -115,8 +75,6 @@ export class UserService{
         let count = FakeData.instance.getFolloweesCount(request.user);
         return count;
     };
-
-    
 }
 
 

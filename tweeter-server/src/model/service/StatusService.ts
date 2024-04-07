@@ -1,5 +1,5 @@
-import { AuthToken, User, Status, FakeData } from "tweeter-shared";
-import { loadMoreStatusItemsRequest } from "tweeter-shared/dist/model/net/TweeterRequest";
+import { Status, FakeData } from "tweeter-shared";
+import { PostStatusRequest, loadMoreStatusItemsRequest } from "tweeter-shared/dist/model/net/TweeterRequest";
 
 export class StatusService {
     public async loadMoreFeedItems(
@@ -22,5 +22,15 @@ export class StatusService {
         }
 
         return [statuses, hasMorePages];
+    };
+
+    public async postStatus(
+        request: PostStatusRequest
+    ): Promise<void> {
+        if (request !instanceof PostStatusRequest){
+            throw new Error("[Bad Request] Invalid request");
+        }
+
+        await new Promise((f) => setTimeout(f, 2000));
     };
 }

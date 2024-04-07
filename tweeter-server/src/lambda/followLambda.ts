@@ -1,9 +1,10 @@
 import { TweeterResponse, AuthenticateResponse, LoginRequest, User, AuthToken, followToggleRequest, FollowToggleResponse } from "tweeter-shared";
 import { UserService } from "../model/service/UserService";
+import { FollowService } from "../model/service/FollowService";
 
 export const handler = async (event: followToggleRequest): Promise<FollowToggleResponse> => {
     try {
-        await new UserService().follow(event);
+        await new FollowService().follow(event);
         return new FollowToggleResponse(0, 0, true);
     } catch (error) {
         if (error instanceof Error){

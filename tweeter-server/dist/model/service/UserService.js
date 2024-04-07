@@ -12,20 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const tweeter_shared_1 = require("tweeter-shared");
 class UserService {
-    follow(request) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield new Promise((f) => setTimeout(f, 2000));
-            return;
-        });
-    }
-    ;
-    unfollow(request) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield new Promise((f) => setTimeout(f, 2000));
-            return;
-        });
-    }
-    ;
     login(request) {
         return __awaiter(this, void 0, void 0, function* () {
             if (request instanceof tweeter_shared_1.LoginRequest) {
@@ -73,28 +59,6 @@ class UserService {
                 throw new Error("[Internal Server Error] Invalid alias");
             }
             return alias;
-        });
-    }
-    ;
-    getIsFollowerStatus(request) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (request instanceof tweeter_shared_1.GetIsFollowerStatusRequest) {
-                throw new Error("[Bad Request] Invalid authToken or user");
-            }
-            let isFollower = tweeter_shared_1.FakeData.instance.isFollower();
-            if (isFollower === null) {
-                throw new Error("[Internal Server Error] Unknown error in getIsFollowerStatus");
-            }
-            return isFollower;
-        });
-    }
-    ;
-    postStatus(request) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (request instanceof tweeter_shared_1.PostStatusRequest) {
-                throw new Error("[Bad Request] Invalid request");
-            }
-            yield new Promise((f) => setTimeout(f, 2000));
         });
     }
     ;

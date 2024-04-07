@@ -11,10 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handler = void 0;
 const tweeter_shared_1 = require("tweeter-shared");
-const UserService_1 = require("../model/service/UserService");
+const StatusService_1 = require("../model/service/StatusService");
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield new UserService_1.UserService().postStatus(event);
+        yield new StatusService_1.StatusService().postStatus(event);
         return new tweeter_shared_1.TweeterResponse(true);
     }
     catch (error) {
