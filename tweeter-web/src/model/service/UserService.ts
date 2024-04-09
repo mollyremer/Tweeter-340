@@ -1,4 +1,4 @@
-import { AuthToken, User, Status, FakeData, LoginRequest, AuthenticateResponse, RegisterRequest, GetUserRequest, GetIsFollowerStatusRequest, GetFolloweesCountRequest, GetFollowerCountRequest, PostStatusRequest, LogoutRequest } from "tweeter-shared";
+import { AuthToken, User, Status, FakeData, LoginRequest, AuthenticateResponse, RegisterRequest, GetUserRequest, GetIsFollowerStatusRequest, GetFolloweesCountRequest, GetFollowerCountRequest, PostStatusRequest, LogoutRequest, followToggleRequest } from "tweeter-shared";
 import { Buffer } from "buffer";
 import { ServerFacade } from "../net/ServerFacade";
 
@@ -6,9 +6,11 @@ export class UserService {
     private server = new ServerFacade;
 
     public async follow(
+        currentUser: User,
         authToken: AuthToken,
         userToFollow: User
     ): Promise<[followersCount: number, followeesCount: number]> {
+        await this.server.follow(new followToggleRequest(currentUser, userToFollow, authToken));
         let followersCountResponse = await this.server.getFollowerCount(new GetFollowerCountRequest(authToken, userToFollow));
         let followeesCountResponse = await this.server.getFolloweesCount(new GetFolloweesCountRequest(authToken, userToFollow));
 
@@ -18,9 +20,11 @@ export class UserService {
     };
 
     public async unfollow(
+        currentUser: User,
         authToken: AuthToken,
         userToUnfollow: User
     ): Promise<[followersCount: number, followeesCount: number]> {
+        await this.server.follow(new followToggleRequest(currentUser, userToUnfollow, authToken));
         let followersCountResponse = await this.server.getFollowerCount(new GetFollowerCountRequest(authToken, userToUnfollow));
         let followeesCountResponse = await this.server.getFolloweesCount(new GetFolloweesCountRequest(authToken, userToUnfollow));
 

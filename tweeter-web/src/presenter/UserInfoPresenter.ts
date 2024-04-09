@@ -57,6 +57,7 @@ export class UserInfoPresenter extends Presenter {
     public async followDisplayedUser(
         event: React.MouseEvent,
         displayedUser: User | null,
+        currentUser: User | null,
         authToken: AuthToken | null
     ): Promise<void> {
         event.preventDefault();
@@ -64,6 +65,7 @@ export class UserInfoPresenter extends Presenter {
             this.view.displayInfoMessage(`Adding ${displayedUser!.name} to followers...`, 0);
 
             let [followersCount, followeesCount] = await this.service.follow(
+                currentUser!,
                 authToken!,
                 displayedUser!
             );
@@ -79,6 +81,7 @@ export class UserInfoPresenter extends Presenter {
     public async unfollowDisplayedUser(
         event: React.MouseEvent,
         displayedUser: User | null,
+        currentUser: User | null,
         authToken: AuthToken | null
     ): Promise<void> {
         event.preventDefault();
@@ -90,6 +93,7 @@ export class UserInfoPresenter extends Presenter {
             );
 
             let [followersCount, followeesCount] = await this.service.unfollow(
+                currentUser!,
                 authToken!,
                 displayedUser!
             );

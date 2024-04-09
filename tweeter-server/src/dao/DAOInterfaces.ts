@@ -1,8 +1,8 @@
 import { AuthToken, Follow, Status, User } from "tweeter-shared";
-import { DataPage } from "./DataPage";
+import { DataPage } from "./djangoDao/DataPage";
 
 export interface AuthDAOInterface {
-    put(password: string): Promise<void>;
+    put(password: string): Promise<AuthToken>;
     get(token: string): Promise<AuthToken | undefined>;
     delete(token: string): Promise<void>;
 }
@@ -17,7 +17,11 @@ export interface StatusDAOInterface {
 
 export interface UserDAOInterface {
     put(user: User, password: string): Promise<void>;
-    get(alias: string): Promise<User | undefined>;
+    getUser(alias: string): Promise<User | null>;
+    getFollowerCount(alias: string): Promise<number>;
+    getFolloweeCount(alias: string): Promise<number>;
+    updateFollowerCount(alias: string, update: number): Promise<void>;
+    updateFolloweeCount(alias: string, update: number): Promise<void>;
 }
 
 export interface FollowsDAOInterface {
@@ -25,6 +29,6 @@ export interface FollowsDAOInterface {
     update(follow: Follow): Promise<void>;
     delete(follow: Follow): Promise<void>
     get(follow: Follow): Promise<Follow | undefined>
-    getPageOfFollowees(followerHandle: string, pageSize: number, lastFolloweeHandle: string | undefined): Promise<DataPage<Follow>>;
-    getPageOfFollowers(followeeHandle: string, pageSize: number, lastFollowerHandle: string | undefined): Promise<DataPage<Follow>>;
+    getPageOfFollowees(followerHandle: string, pageSize: number, lastFolloweeHandle: string | undefined): Promise<DataPage<User>>;
+    getPageOfFollowers(followeeHandle: string, pageSize: number, lastFollowerHandle: string | undefined): Promise<DataPage<User>>;
 }

@@ -11,33 +11,39 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StatusService = void 0;
 const tweeter_shared_1 = require("tweeter-shared");
-const TweeterRequest_1 = require("tweeter-shared/dist/model/net/TweeterRequest");
+const DAOFactory_1 = require("../../dao/DAOFactory");
 class StatusService {
+    constructor() {
+        this.DAO = new DAOFactory_1.DAOFactory;
+    }
     loadMoreFeedItems(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            let [statuses, hasMorePages] = tweeter_shared_1.FakeData.instance.getPageOfStatuses(request.lastItem, request.pageSize);
-            if ((statuses === null) || (hasMorePages === null)) {
+            let page = yield this.DAO.feedDAO.getPage(request.user.alias, request.pageSize);
+            if (((page.values) === null) || (page.hasMorePages === null)) {
                 throw new Error("[Internal Server Error] Invalid user or authToken");
             }
-            return [statuses, hasMorePages];
+            return [page.values, page.hasMorePages];
         });
     }
     ;
     loadMoreStoryItems(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            let [statuses, hasMorePages] = tweeter_shared_1.FakeData.instance.getPageOfStatuses(request.lastItem, request.pageSize);
-            if ((statuses === null) || (hasMorePages === null)) {
+            let page = yield this.DAO.feedDAO.getPage(request.user.alias, request.pageSize);
+            if ((page.values === null) || (page.hasMorePages === null)) {
                 throw new Error("[Internal Server Error] Invalid user or authToken");
             }
-            return [statuses, hasMorePages];
+            return [page.values, page.hasMorePages];
         });
     }
     ;
     postStatus(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (request instanceof TweeterRequest_1.PostStatusRequest) {
-                throw new Error("[Bad Request] Invalid request");
+            let authToken = yield this.DAO.authDAO.get(request.authToken.token);
+            if (authToken === null) {
+                throw new Error("[Internal Server Error] Invalid authToken");
             }
+            yield this.DAO.storyDAO.put(new tweeter_shared_1.Status(request.newStatus.post, request.newStatus.user, request.newStatus.timestamp), request.newStatus.user.alias);
+            yield this.DAO.feedDAO.put(new tweeter_shared_1.Status(request.newStatus.post, request.newStatus.user, request.newStatus.timestamp), request.newStatus.user.alias);
             yield new Promise((f) => setTimeout(f, 2000));
         });
     }

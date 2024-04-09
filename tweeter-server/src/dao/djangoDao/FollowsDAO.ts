@@ -9,10 +9,10 @@ import {
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { Follow, User } from "tweeter-shared";
 import { DataPage } from "./DataPage";
-import { FollowsDAOInterface } from "./DAOInterfaces";
+import { FollowsDAOInterface } from "../DAOInterfaces";
 
 
-export class FollowsDAO implements FollowsDAOInterface{
+export class FollowsDAO implements FollowsDAOInterface {
     readonly tableName = "follows";
     readonly indexName = "follows_index";
     readonly followerHandle = "followerHandle";
@@ -68,7 +68,7 @@ export class FollowsDAO implements FollowsDAOInterface{
             )
     }
 
-    async getPageOfFollowees(followerHandle: string, pageSize: number, lastFolloweeHandle: string | undefined): Promise<DataPage<Follow>> {
+    async getPageOfFollowees(followerHandle: string, pageSize: number, lastFolloweeHandle: string | undefined): Promise<DataPage<User>> {
         const params = {
             KeyConditionExpression: this.followerHandle + " = :fr",
             ExpressionAttributeValues: {
@@ -85,21 +85,18 @@ export class FollowsDAO implements FollowsDAOInterface{
                     },
         };
 
-        const items: Follow[] = [];
+        const items: User[] = [];
         const data = await this.client.send(new QueryCommand(params));
         const hasMorePages = data.LastEvaluatedKey !== undefined;
         data.Items?.forEach((item) =>
             items.push(
-                new Follow(
-                    User.fromJson(item[this.followeeHandle])!,
-                    User.fromJson(item[this.followerHandle])!
-                )
+                User.fromJson(item[this.followeeHandle])!
             )
         );
-        return new DataPage<Follow>(items, hasMorePages);
+        return new DataPage<User>(items, hasMorePages);
     }
 
-    async getPageOfFollowers(followeeHandle: string, pageSize: number, lastFollowerHandle: string | undefined): Promise<DataPage<Follow>> {
+    async getPageOfFollowers(followeeHandle: string, pageSize: number, lastFollowerHandle: string | undefined): Promise<DataPage<User>> {
         const params = {
             KeyConditionExpression: this.followeeHandle + " = :fe",
             ExpressionAttributeValues: {
@@ -117,19 +114,16 @@ export class FollowsDAO implements FollowsDAOInterface{
                     },
         };
 
-        const items: Follow[] = [];
+        const items: User[] = [];
         const data = await this.client.send(new QueryCommand(params));
         const hasMorePages = data.LastEvaluatedKey !== undefined;
-        data.Items?.forEach((item) =>
+        data.Items?.forEach((items) =>
             items.push(
-                new Follow(
-                    User.fromJson(item[this.followeeHandle])!,
-                    User.fromJson(item[this.followerHandle])!
-                )
+                User.fromJson(items[this.followerHandle])!
             )
         );
 
-        return new DataPage<Follow>(items, hasMorePages);
+        return new DataPage<User>(items, hasMorePages);
 
     }
 }

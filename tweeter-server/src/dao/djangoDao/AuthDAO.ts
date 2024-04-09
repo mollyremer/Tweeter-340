@@ -6,7 +6,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { AuthToken } from "tweeter-shared";
-import { AuthDAOInterface } from "./DAOInterfaces";
+import { AuthDAOInterface } from "../DAOInterfaces";
 
 export class AuthDAO implements AuthDAOInterface{
     readonly tableName = "authToken";
@@ -16,7 +16,7 @@ export class AuthDAO implements AuthDAOInterface{
 
     private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
 
-    async put(password: string): Promise<void> {
+    async put(password: string): Promise<AuthToken> {
         let authToken: AuthToken = AuthToken.Generate();
         const params = {
             TableName: this.tableName,
@@ -27,6 +27,7 @@ export class AuthDAO implements AuthDAOInterface{
             },
         };
         await this.client.send(new PutCommand(params));
+        return authToken;
     }
 
     async get(token: string): Promise<AuthToken | undefined> {

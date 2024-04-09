@@ -1,7 +1,7 @@
 import { AuthenticateResponse, LoginRequest, LogoutRequest, RegisterRequest, TweeterResponse, GetUserRequest, GetUserResponse, GetIsFollowerStatusRequest, GetIsFollowerStatusResponse, GetFolloweesCountRequest, GetCountResponse, GetFollowerCountRequest, PostStatusRequest } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
-import { loadMoreFollowsRequest, loadMoreStatusItemsRequest } from "tweeter-shared/dist/model/net/TweeterRequest";
-import { GetPageOfStatusesResponse, GetPageOfUsersResponse } from "tweeter-shared/dist/model/net/TweeterResponse";
+import { followToggleRequest, loadMoreFollowsRequest, loadMoreStatusItemsRequest } from "tweeter-shared/dist/model/net/TweeterRequest";
+import { FollowToggleResponse, GetPageOfStatusesResponse, GetPageOfUsersResponse } from "tweeter-shared/dist/model/net/TweeterResponse";
 
 export class ServerFacade {
 
@@ -91,5 +91,19 @@ export class ServerFacade {
     const response: JSON = await this.clientCommunicator.doPost<loadMoreFollowsRequest>(request, endpoint);
 
     return GetPageOfUsersResponse.fromJson(response);
+  }
+
+  async follow(request: followToggleRequest): Promise<FollowToggleResponse> {
+    const endpoint = "/follow";
+    const response: JSON = await this.clientCommunicator.doPost<followToggleRequest>(request, endpoint);
+
+    return FollowToggleResponse.fromJson(response);
+  }
+
+  async unfollow(request: followToggleRequest): Promise<FollowToggleResponse> {
+    const endpoint = "/unfollow";
+    const response: JSON = await this.clientCommunicator.doPost<followToggleRequest>(request, endpoint);
+
+    return FollowToggleResponse.fromJson(response);
   }
 }

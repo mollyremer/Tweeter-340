@@ -11,14 +11,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const tweeter_shared_1 = require("tweeter-shared");
+const DAOFactory_1 = require("../../dao/DAOFactory");
 class UserService {
+    constructor() {
+        this.DAO = new DAOFactory_1.DAOFactory;
+    }
     login(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (request instanceof tweeter_shared_1.LoginRequest) {
-                throw new Error("[Bad Request] Invalid alias or password");
-            }
-            let user = tweeter_shared_1.FakeData.instance.firstUser;
-            let authToken = tweeter_shared_1.FakeData.instance.authToken;
+            let user = yield this.DAO.userDAO.getUser(request.username);
+            let authToken = yield this.DAO.authDAO.put(request.password);
             if ((user === null) || (authToken === null)) {
                 throw new Error("[Internal Server Error] Invalid user or authToken");
             }
@@ -28,11 +29,9 @@ class UserService {
     ;
     register(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (request instanceof tweeter_shared_1.RegisterRequest) {
-                throw new Error("[Bad Request] Invalid alias or password");
-            }
-            let user = tweeter_shared_1.FakeData.instance.firstUser;
-            let authToken = tweeter_shared_1.FakeData.instance.authToken;
+            yield this.DAO.userDAO.put(new tweeter_shared_1.User(request.firstName, request.lastName, request.alias, request.userImageBytes), request.password);
+            let user = yield this.DAO.userDAO.getUser(request.alias);
+            let authToken = yield this.DAO.authDAO.put(request.password);
             if ((user === null) || (authToken === null)) {
                 throw new Error("[Internal Server Error] Invalid user or authToken");
             }
@@ -42,19 +41,14 @@ class UserService {
     ;
     logout(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (request instanceof tweeter_shared_1.LogoutRequest) {
-                throw new Error("[Bad Request] Invalid authToken");
-            }
+            yield this.DAO.authDAO.delete(request.authToken.token);
             yield new Promise((res) => setTimeout(res, 1000));
         });
     }
     ;
     getUser(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            // if (request !instanceof GetUserRequest){
-            //     throw new Error("[Bad Request] Invalid alias");
-            // }
-            let alias = tweeter_shared_1.FakeData.instance.findUserByAlias(request.alias);
+            let alias = yield this.DAO.userDAO.getUser(request.alias);
             if (alias === null) {
                 throw new Error("[Internal Server Error] Invalid alias");
             }
@@ -64,14 +58,14 @@ class UserService {
     ;
     getFollowerCount(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            let count = tweeter_shared_1.FakeData.instance.getFollowersCount(request.user);
+            let count = yield this.DAO.userDAO.getFollowerCount(request.user.alias);
             return count;
         });
     }
     ;
     getFolloweesCount(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            let count = tweeter_shared_1.FakeData.instance.getFolloweesCount(request.user);
+            let count = yield this.DAO.userDAO.getFollowerCount(request.user.alias);
             return count;
         });
     }

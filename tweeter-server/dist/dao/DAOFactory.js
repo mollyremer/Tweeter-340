@@ -1,19 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DAOFactory = void 0;
-const AuthDAO_1 = require("./AuthDAO");
-const FeedDAO_1 = require("./FeedDAO");
-const StoryDAO_1 = require("./StoryDAO");
-const UserDAO_1 = require("./UserDAO");
-const FollowsDAO_1 = require("./FollowsDAO");
+const AuthDAO_1 = require("./djangoDao/AuthDAO");
+const FeedDAO_1 = require("./djangoDao/FeedDAO");
+const StoryDAO_1 = require("./djangoDao/StoryDAO");
+const UserDAO_1 = require("./djangoDao/UserDAO");
+const FollowsDAO_1 = require("./djangoDao/FollowsDAO");
 class DAOFactory {
-    // constructor(authDAO: AuthDAOInterface, userDAO: UserDAOInterface, feedDAO: StatusDAOInterface, storyDAO: StatusDAOInterface, followsDAO: FollowsDAOInterface){
-    //     this.authDAO = authDAO;
-    //     this.userDAO = userDAO;
-    //     this.feedDAO = feedDAO;
-    //     this.storyDAO = storyDAO;
-    //     this.followsDAO = followsDAO;
-    // }
     constructor() {
         this.authDAO = new AuthDAO_1.AuthDAO;
         this.userDAO = new UserDAO_1.UserDAO;

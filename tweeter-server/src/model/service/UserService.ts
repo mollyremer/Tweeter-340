@@ -1,19 +1,18 @@
 import { User, AuthToken, FakeData, LoginRequest, RegisterRequest, LogoutRequest, GetUserRequest, GetIsFollowerStatusRequest, GetFolloweesCountRequest, PostStatusRequest, GetFollowerCountRequest, followToggleRequest } from "tweeter-shared";
+import { DAOFactory } from "../../dao/DAOFactory";
 
 export class UserService{
+    private DAO: DAOFactory = new DAOFactory;
+
     public async login(
         request: LoginRequest
     ): Promise<[User, AuthToken]> {
-        if (request !instanceof LoginRequest){
-            throw new Error("[Bad Request] Invalid alias or password");
-        }
-
-        let user = FakeData.instance.firstUser;
-        let authToken = FakeData.instance.authToken;
+        let user = await this.DAO.userDAO.getUser(request.username);
+        let authToken = await this.DAO.authDAO.put(request.password);
 
         if ((user === null) || (authToken === null)) {
             throw new Error("[Internal Server Error] Invalid user or authToken");
-        }
+        } 
 
         return [user, authToken];
     };
@@ -21,16 +20,13 @@ export class UserService{
     public async register(
         request: RegisterRequest
     ): Promise<[User, AuthToken]> {
-        if (request !instanceof RegisterRequest){
-            throw new Error("[Bad Request] Invalid alias or password");
-        }
-
-        let user = FakeData.instance.firstUser;
-        let authToken = FakeData.instance.authToken;
+        await this.DAO.userDAO.put(new User(request.firstName, request.lastName, request.alias, request.userImageBytes), request.password);
+        let user = await this.DAO.userDAO.getUser(request.alias)
+        let authToken = await this.DAO.authDAO.put(request.password);
 
         if ((user === null) || (authToken === null)) {
             throw new Error("[Internal Server Error] Invalid user or authToken");
-        }
+        } 
 
         return [user, authToken];
     };
@@ -38,22 +34,14 @@ export class UserService{
     public async logout(
         request: LogoutRequest
     ): Promise<void> {
-        if (request !instanceof LogoutRequest){
-            throw new Error("[Bad Request] Invalid authToken");
-        }
-
+        await this.DAO.authDAO.delete(request.authToken.token);
         await new Promise((res) => setTimeout(res, 1000));
     };
 
     public async getUser(
         request: GetUserRequest
     ): Promise<User | null> {
-        // if (request !instanceof GetUserRequest){
-        //     throw new Error("[Bad Request] Invalid alias");
-        // }
-
-        let alias = FakeData.instance.findUserByAlias(request.alias);
-
+        let alias = await this.DAO.userDAO.getUser(request.alias);
         if (alias === null){
             throw new Error("[Internal Server Error] Invalid alias")
         }
@@ -64,15 +52,14 @@ export class UserService{
     public async getFollowerCount(
         request: GetFollowerCountRequest
     ): Promise<number> {
-        
-        let count = FakeData.instance.getFollowersCount(request.user);
+        let count = await this.DAO.userDAO.getFollowerCount(request.user.alias);
         return count;
     };
 
     public async getFolloweesCount(
         request: GetFolloweesCountRequest
     ): Promise<number> {
-        let count = FakeData.instance.getFolloweesCount(request.user);
+        let count = await this.DAO.userDAO.getFollowerCount(request.user.alias);
         return count;
     };
 }

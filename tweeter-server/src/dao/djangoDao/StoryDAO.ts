@@ -3,27 +3,28 @@ import {
     DynamoDBDocumentClient,
     GetCommand,
     PutCommand,
-    QueryCommand
+    QueryCommand,
+    UpdateCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { Status } from "tweeter-shared";
 import { DataPage } from "./DataPage";
-import { StatusDAOInterface } from "./DAOInterfaces";
+import { StatusDAOInterface } from "../DAOInterfaces";
 
-export class FeedDAO implements StatusDAOInterface{
-    readonly tableName = "feed";
-    readonly indexName = "feed-index";
-    readonly followerAlias = "followerAlias";
+export class StoryDAO implements StatusDAOInterface{
+    readonly tableName = "story";
+    readonly indexName = "story-index";
+    readonly authorAlias = "authorAlias";
     readonly timestamp = "timestamp";
     readonly jsonPost = "jsonPost";
 
     private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
 
-    async put(status: Status, followerAlias: string): Promise<void> {
+    async put(status: Status, authorAlias: string): Promise <void> {
         const params = {
             TableName: this.tableName,
             Item: {
-                [this.followerAlias]: followerAlias,
+                [this.authorAlias]: authorAlias,
                 [this.timestamp]: status.timestamp,
                 [this.jsonPost]: status.toJson
             },
@@ -31,29 +32,29 @@ export class FeedDAO implements StatusDAOInterface{
         await this.client.send(new PutCommand(params));
     }
 
-    async update(status: Status, followerAlias: string): Promise<void> {
-        await this.put(status, followerAlias);
+    async update(status: Status, authorAlias: string): Promise<void> {
+        await this.put(status, authorAlias);
     }
 
-    async delete(status: Status, followerAlias: string): Promise<void> {
+    async delete(status: Status, authorAlias: string): Promise<void> {
         const params = {
             TableName: this.tableName,
-            Key: this.generateKey(followerAlias, status.timestamp)
+            Key: this.generateKey(authorAlias, status.timestamp)
         };
         await this.client.send(new DeleteCommand(params));
     }
 
-    private generateKey(followerAlias: string, timestamp: number) {
+    private generateKey(authorAlias: string, timestamp: number){
         return {
-            [this.followerAlias]: followerAlias,
+            [this.authorAlias]: authorAlias,
             [this.tableName]: timestamp
         }
     }
 
-    async get(status: Status, followerAlias: string): Promise<Status | undefined> {
+    async get(status: Status, authorAlias: string): Promise<Status | undefined>{
         const params = {
             TableName: this.tableName,
-            Key: this.generateKey(followerAlias, status.timestamp),
+            Key: this.generateKey(authorAlias, status.timestamp),
         };
         const output = await this.client.send(new GetCommand(params));
         return output.Item == undefined
@@ -61,11 +62,11 @@ export class FeedDAO implements StatusDAOInterface{
             : Status.fromJson(output.Item[this.jsonPost])!;
     }
 
-    async getPage(followerAlias: string, pageSize: number): Promise<DataPage<Status>> {
+    async getPage(authorAlias: string, pageSize: number): Promise<DataPage<Status>> {
         const params = {
-            KeyConditionExpression: this.followerAlias + " = :f",
+            KeyConditionExpression: this.authorAlias + " = :f",
             ExpressionAttributeValues: {
-                ":f": followerAlias,
+                ":f": authorAlias,
             },
             TableName: this.tableName,
             Limit: pageSize,
@@ -74,12 +75,12 @@ export class FeedDAO implements StatusDAOInterface{
         const items: Status[] = [];
         const data = await this.client.send(new QueryCommand(params));
         const hasMorePages = data.LastEvaluatedKey !== undefined;
-        data.Items?.forEach((item) =>
+        data.Items?.forEach((items) => 
             items.push(
                 Status.fromJson(this.jsonPost)!
             )
         )
         return new DataPage<Status>(items, hasMorePages);
     }
-
+    
 }

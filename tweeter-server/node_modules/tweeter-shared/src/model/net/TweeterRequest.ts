@@ -5,13 +5,15 @@ import { Status } from "../domain/Status";
 export class TweeterRequest { }
 
 export class followToggleRequest extends TweeterRequest {
-    authToken: AuthToken;
+    currentUser: User;
     userToFollow: User;
+    authToken: AuthToken;
 
-    constructor(authToken: AuthToken, userToFollow: User){
+    constructor(currentUser: User, userToFollow: User, authToken: AuthToken){
         super();
-        this.authToken = authToken;
+        this.currentUser = currentUser;
         this.userToFollow = userToFollow;
+        this.authToken = authToken;
     }
 }
 

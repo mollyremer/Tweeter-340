@@ -54,6 +54,31 @@ export class FollowToggleResponse extends TweeterResponse {
     this._followeesCount = followeesCount;
     this._followersCount = followersCount
   }
+
+  get followersCount() {
+    return this._followeesCount;
+  }
+
+  get followeesCount() {
+    return this._followersCount;
+  }
+
+  static fromJson(json: JSON): FollowToggleResponse {
+    interface FollowToggleResponseJson extends ResponseJson {
+      _followersCount: number;
+      _followeesCount: number
+    }
+
+    const jsonObject: FollowToggleResponseJson =
+      json as unknown as FollowToggleResponseJson;
+
+    return new FollowToggleResponse(
+      jsonObject._followersCount,
+      jsonObject._followeesCount,
+      jsonObject._success,
+      jsonObject._message
+    );
+  }
 }
 
 export class GetPageOfUsersResponse extends TweeterResponse {

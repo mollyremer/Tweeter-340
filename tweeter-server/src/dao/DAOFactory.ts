@@ -1,9 +1,9 @@
-import { AuthDAO } from "./AuthDAO";
+import { AuthDAO } from "./djangoDao/AuthDAO";
 import { AuthDAOInterface, FollowsDAOInterface, StatusDAOInterface, UserDAOInterface } from "./DAOInterfaces";
-import { FeedDAO } from "./FeedDAO";
-import { StoryDAO } from "./StoryDAO";
-import { UserDAO } from "./UserDAO";
-import { FollowsDAO } from "./FollowsDAO";
+import { FeedDAO } from "./djangoDao/FeedDAO";
+import { StoryDAO } from "./djangoDao/StoryDAO";
+import { UserDAO } from "./djangoDao/UserDAO";
+import { FollowsDAO } from "./djangoDao/FollowsDAO";
 
 export interface DAOFactoryInterface {
     authDAO: AuthDAOInterface;
@@ -19,14 +19,6 @@ export class DAOFactory implements DAOFactoryInterface{
     public feedDAO: StatusDAOInterface;
     public storyDAO: StatusDAOInterface;
     public followsDAO: FollowsDAOInterface;
-
-    // constructor(authDAO: AuthDAOInterface, userDAO: UserDAOInterface, feedDAO: StatusDAOInterface, storyDAO: StatusDAOInterface, followsDAO: FollowsDAOInterface){
-    //     this.authDAO = authDAO;
-    //     this.userDAO = userDAO;
-    //     this.feedDAO = feedDAO;
-    //     this.storyDAO = storyDAO;
-    //     this.followsDAO = followsDAO;
-    // }
 
     constructor(){
         this.authDAO = new AuthDAO;
