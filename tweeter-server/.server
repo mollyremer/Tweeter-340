@@ -1,10 +1,10 @@
 BUCKET='mollys-test-bucket'
 EDIT_LAMBDALIST='
-login
-loadMoreFollowees
 loadMoreFeedItems
 postStatus
 loadMoreFollowers
+loadMoreFollowees
+login
 loadMoreFollowees
 getFollowerCount
 getIsFollowerStatus

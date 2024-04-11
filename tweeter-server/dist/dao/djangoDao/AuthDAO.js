@@ -18,10 +18,10 @@ class AuthDAO {
         this.tableName = "authToken";
         this.token = "token";
         this.timestamp = "timestamp";
-        this.password = "password";
+        this.alias = "alias";
         this.client = lib_dynamodb_1.DynamoDBDocumentClient.from(new client_dynamodb_1.DynamoDBClient());
     }
-    put(password) {
+    put(alias, password) {
         return __awaiter(this, void 0, void 0, function* () {
             let authToken = tweeter_shared_1.AuthToken.Generate();
             const params = {
@@ -29,7 +29,7 @@ class AuthDAO {
                 Item: {
                     [this.token]: authToken.token,
                     [this.timestamp]: authToken.timestamp,
-                    [this.password]: password
+                    [this.alias]: alias
                 },
             };
             yield this.client.send(new lib_dynamodb_1.PutCommand(params));

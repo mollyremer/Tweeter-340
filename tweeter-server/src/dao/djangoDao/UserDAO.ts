@@ -20,7 +20,10 @@ export class UserDAO implements UserDAOInterface {
     readonly followerCount = "followerCount";
     readonly followeeCount = "followeeCount";
 
-    private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
+    private readonly client;
+    constructor(client: DynamoDBDocumentClient){
+        this.client = client;
+    }
 
     async put(user: User, password: String, followerCount?: number, followeeCount?: number): Promise<void> {
         const params = {
@@ -52,6 +55,17 @@ export class UserDAO implements UserDAOInterface {
                 output.Item[this.alias],
                 output.Item[this.imageUrl],
             );
+    }
+
+    async getPassword(alias: string): Promise<string | null> {
+        const params = {
+            TableName: this.tableName,
+            Key: this.generateKey(alias),
+        };
+        const output = await this.client.send(new GetCommand(params))
+        return output.Item == undefined
+            ? null
+            : output.Item[this.password];
     }
 
     async getFollowerCount(alias: string): Promise<number> {

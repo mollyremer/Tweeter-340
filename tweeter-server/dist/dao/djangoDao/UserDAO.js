@@ -54,6 +54,18 @@ class UserDAO {
                 : new tweeter_shared_1.User(output.Item[this.firstName], output.Item[this.lastName], output.Item[this.alias], output.Item[this.imageUrl]);
         });
     }
+    getPassword(alias) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const params = {
+                TableName: this.tableName,
+                Key: this.generateKey(alias),
+            };
+            const output = yield this.client.send(new lib_dynamodb_1.GetCommand(params));
+            return output.Item == undefined
+                ? null
+                : output.Item[this.password];
+        });
+    }
     getFollowerCount(alias) {
         return __awaiter(this, void 0, void 0, function* () {
             const params = {

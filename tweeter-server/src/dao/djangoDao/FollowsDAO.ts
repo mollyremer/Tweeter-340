@@ -20,8 +20,11 @@ export class FollowsDAO implements FollowsDAOInterface {
     readonly follower = "follower";
     readonly followee = "followee";
 
-    private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
-
+    private readonly client;
+    constructor(client: DynamoDBDocumentClient){
+        this.client = client;
+    }
+    
     async put(follow: Follow): Promise<void> {
         const params = {
             TableName: this.tableName,

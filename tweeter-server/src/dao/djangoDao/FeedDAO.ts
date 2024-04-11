@@ -17,8 +17,11 @@ export class FeedDAO implements StatusDAOInterface{
     readonly timestamp = "time-stamp";
     readonly jsonPost = "jsonPost";
 
-    private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
-
+    private readonly client;
+    constructor(client: DynamoDBDocumentClient){
+        this.client = client;
+    }
+    
     async put(status: Status, followerAlias: string): Promise<void> {
         const params = {
             TableName: this.tableName,

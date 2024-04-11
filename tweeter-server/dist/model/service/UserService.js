@@ -11,15 +11,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const tweeter_shared_1 = require("tweeter-shared");
-const DAOFactory_1 = require("../../dao/DAOFactory");
-class UserService {
-    constructor() {
-        this.DAO = new DAOFactory_1.DAOFactory;
-    }
+const Service_1 = require("./Service");
+class UserService extends Service_1.Service {
     login(request) {
         return __awaiter(this, void 0, void 0, function* () {
             let user = yield this.DAO.userDAO.getUser(request.username);
-            let authToken = yield this.DAO.authDAO.put(request.password);
+            let authToken = yield this.DAO.authDAO.put(request.username, request.password);
+            yield this.authenticateUser(request.username, request.password);
             if ((user === null) || (authToken === null)) {
                 throw new Error("[Internal Server Error] Invalid user or authToken");
             }
@@ -30,12 +28,7 @@ class UserService {
     register(request) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.DAO.userDAO.put(new tweeter_shared_1.User(request.firstName, request.lastName, request.alias, request.userImageBytes), request.password);
-            let user = yield this.DAO.userDAO.getUser(request.alias);
-            let authToken = yield this.DAO.authDAO.put(request.password);
-            if ((user === null) || (authToken === null)) {
-                throw new Error("[Internal Server Error] Invalid user or authToken");
-            }
-            return [user, authToken];
+            return this.login(new tweeter_shared_1.LoginRequest(request.alias, request.password));
         });
     }
     ;

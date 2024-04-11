@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StatusService = void 0;
 const tweeter_shared_1 = require("tweeter-shared");
-const DAOFactory_1 = require("../../dao/DAOFactory");
+const DAOFactory_1 = require("../../dao/djangoDao/DAOFactory");
 class StatusService {
     constructor() {
         this.DAO = new DAOFactory_1.DAOFactory;

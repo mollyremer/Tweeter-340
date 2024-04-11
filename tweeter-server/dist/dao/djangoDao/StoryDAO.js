@@ -19,7 +19,7 @@ class StoryDAO {
         this.tableName = "story";
         this.indexName = "story-index";
         this.authorAlias = "authorAlias";
-        this.timestamp = "timestamp";
+        this.timestamp = "time-stamp";
         this.jsonPost = "jsonPost";
         this.client = lib_dynamodb_1.DynamoDBDocumentClient.from(new client_dynamodb_1.DynamoDBClient());
     }

@@ -1,14 +1,14 @@
 import { User, AuthToken, FakeData, LoginRequest, RegisterRequest, LogoutRequest, GetUserRequest, GetIsFollowerStatusRequest, GetFolloweesCountRequest, PostStatusRequest, GetFollowerCountRequest, followToggleRequest } from "tweeter-shared";
 import { DAOFactory } from "../../dao/djangoDao/DAOFactory";
+import { Service } from "./Service";
 
-export class UserService{
-    private DAO: DAOFactory = new DAOFactory;
-
+export class UserService extends Service{
     public async login(
         request: LoginRequest
     ): Promise<[User, AuthToken]> {
         let user = await this.DAO.userDAO.getUser(request.username);
-        let authToken = await this.DAO.authDAO.put(request.password);
+        let authToken = await this.DAO.authDAO.put(request.username, request.password);
+        await this.authenticateUser(request.username, request.password);
 
         if ((user === null) || (authToken === null)) {
             throw new Error("[Internal Server Error] Invalid user or authToken");
@@ -21,14 +21,7 @@ export class UserService{
         request: RegisterRequest
     ): Promise<[User, AuthToken]> {
         await this.DAO.userDAO.put(new User(request.firstName, request.lastName, request.alias, request.userImageBytes), request.password);
-        let user = await this.DAO.userDAO.getUser(request.alias)
-        let authToken = await this.DAO.authDAO.put(request.password);
-
-        if ((user === null) || (authToken === null)) {
-            throw new Error("[Internal Server Error] Invalid user or authToken");
-        } 
-
-        return [user, authToken];
+        return this.login(new LoginRequest(request.alias, request.password));
     };
 
     public async logout(

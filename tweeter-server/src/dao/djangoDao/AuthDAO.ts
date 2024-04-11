@@ -12,18 +12,21 @@ export class AuthDAO implements AuthDAOInterface{
     readonly tableName = "authToken";
     readonly token = "token";
     readonly timestamp = "timestamp";
-    readonly password = "password";
+    readonly alias = "alias";
 
-    private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
-
-    async put(password: string): Promise<AuthToken> {
+    private readonly client;
+    constructor(client: DynamoDBDocumentClient){
+        this.client = client;
+    }
+    
+    async put(alias: string, password: string): Promise<AuthToken> {
         let authToken: AuthToken = AuthToken.Generate();
         const params = {
             TableName: this.tableName,
             Item: {
                 [this.token]: authToken.token,
                 [this.timestamp]: authToken.timestamp,
-                [this.password]: password
+                [this.alias]: alias
             },
         };
         await this.client.send(new PutCommand(params));

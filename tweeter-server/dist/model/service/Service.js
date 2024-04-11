@@ -9,20 +9,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginLambda = void 0;
-const tweeter_shared_1 = require("tweeter-shared");
-const UserService_1 = require("../model/service/UserService");
-const loginLambda = (event) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        return new tweeter_shared_1.AuthenticateResponse(...yield new UserService_1.UserService().login(event), true);
+exports.Service = void 0;
+const DAOFactory_1 = require("../../dao/djangoDao/DAOFactory");
+class Service {
+    constructor() {
+        this.DAO = new DAOFactory_1.DAOFactory;
     }
-    catch (error) {
-        if (error instanceof Error) {
-            return new tweeter_shared_1.AuthenticateResponse(null, null, false, error.message);
-        }
-        else {
-            return new tweeter_shared_1.AuthenticateResponse(null, null, false);
-        }
+    authenticateUser(alias, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let realPassword = yield this.DAO.userDAO.getPassword(alias);
+            if (realPassword != password) {
+                throw new Error("[Bad Request] Invalid username or password");
+            }
+        });
     }
-});
-exports.loginLambda = loginLambda;
+}
+exports.Service = Service;

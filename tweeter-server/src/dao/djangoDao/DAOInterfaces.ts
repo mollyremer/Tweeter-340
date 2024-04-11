@@ -2,7 +2,7 @@ import { AuthToken, Follow, Status, User } from "tweeter-shared";
 import { DataPage } from "./DataPage";
 
 export interface AuthDAOInterface {
-    put(password: string): Promise<AuthToken>;
+    put(alias: string, password: string): Promise<AuthToken>;
     get(token: string): Promise<AuthToken | undefined>;
     delete(token: string): Promise<void>;
 }
@@ -18,6 +18,7 @@ export interface StatusDAOInterface {
 export interface UserDAOInterface {
     put(user: User, password: string): Promise<void>;
     getUser(alias: string): Promise<User | null>;
+    getPassword(alias: string): Promise<string | null>;
     getFollowerCount(alias: string): Promise<number>;
     getFolloweeCount(alias: string): Promise<number>;
     updateFollowerCount(alias: string, update: number): Promise<void>;
