@@ -14,7 +14,8 @@ const tweeter_shared_1 = require("tweeter-shared");
 const UserService_1 = require("../model/service/UserService");
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return new tweeter_shared_1.GetUserResponse(yield new UserService_1.UserService().getUser(event), true);
+        let request = JSON.parse(JSON.stringify(event));
+        return new tweeter_shared_1.GetUserResponse(yield new UserService_1.UserService().getUser(request), true);
     }
     catch (error) {
         if (error instanceof Error) {

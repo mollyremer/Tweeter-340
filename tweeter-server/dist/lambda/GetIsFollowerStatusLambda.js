@@ -14,7 +14,8 @@ const tweeter_shared_1 = require("tweeter-shared");
 const FollowService_1 = require("../model/service/FollowService");
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return new tweeter_shared_1.GetIsFollowerStatusResponse(yield new FollowService_1.FollowService().getIsFollowerStatus(event), true);
+        let request = JSON.parse(JSON.stringify(event));
+        return new tweeter_shared_1.GetIsFollowerStatusResponse(yield new FollowService_1.FollowService().getIsFollowerStatus(request), true);
     }
     catch (error) {
         if (error instanceof Error) {

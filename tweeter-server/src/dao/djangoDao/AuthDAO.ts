@@ -11,14 +11,14 @@ import { AuthDAOInterface } from "./DAOInterfaces";
 export class AuthDAO implements AuthDAOInterface{
     readonly tableName = "authToken";
     readonly token = "token";
-    readonly timestamp = "timestamp";
+    readonly timestamp = "time-stamp";
     readonly alias = "alias";
 
     private readonly client;
     constructor(client: DynamoDBDocumentClient){
         this.client = client;
     }
-    
+
     async put(alias: string, password: string): Promise<AuthToken> {
         let authToken: AuthToken = AuthToken.Generate();
         const params = {

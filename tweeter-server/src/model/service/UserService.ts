@@ -21,7 +21,7 @@ export class UserService extends Service{
         request: RegisterRequest
     ): Promise<[User, AuthToken]> {
         await this.DAO.userDAO.put(new User(request.firstName, request.lastName, request.alias, request.userImageBytes), request.password);
-        return this.login(new LoginRequest(request.alias, request.password));
+        return await this.login(new LoginRequest(request.alias, request.password));
     };
 
     public async logout(

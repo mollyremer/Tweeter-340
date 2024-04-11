@@ -14,7 +14,8 @@ const tweeter_shared_1 = require("tweeter-shared");
 const StatusService_1 = require("../model/service/StatusService");
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield new StatusService_1.StatusService().postStatus(event);
+        let request = JSON.parse(JSON.stringify(event));
+        yield new StatusService_1.StatusService().postStatus(request);
         return new tweeter_shared_1.TweeterResponse(true);
     }
     catch (error) {

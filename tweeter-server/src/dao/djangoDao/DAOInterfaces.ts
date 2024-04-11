@@ -1,6 +1,10 @@
 import { AuthToken, Follow, Status, User } from "tweeter-shared";
 import { DataPage } from "./DataPage";
 
+export interface ImageDAOInterface {
+    putImage(fileName: string, imageStringBase64Encoded: string): Promise<string>;
+}
+
 export interface AuthDAOInterface {
     put(alias: string, password: string): Promise<AuthToken>;
     get(token: string): Promise<AuthToken | undefined>;

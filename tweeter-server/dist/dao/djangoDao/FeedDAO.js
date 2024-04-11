@@ -11,17 +11,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FeedDAO = void 0;
 const lib_dynamodb_1 = require("@aws-sdk/lib-dynamodb");
-const client_dynamodb_1 = require("@aws-sdk/client-dynamodb");
 const tweeter_shared_1 = require("tweeter-shared");
 const DataPage_1 = require("./DataPage");
 class FeedDAO {
-    constructor() {
+    constructor(client) {
         this.tableName = "feed";
         this.indexName = "feed-index";
         this.followerAlias = "followerAlias";
         this.timestamp = "time-stamp";
         this.jsonPost = "jsonPost";
-        this.client = lib_dynamodb_1.DynamoDBDocumentClient.from(new client_dynamodb_1.DynamoDBClient());
+        this.client = client;
     }
     put(status, followerAlias) {
         return __awaiter(this, void 0, void 0, function* () {

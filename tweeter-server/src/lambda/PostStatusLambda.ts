@@ -3,15 +3,8 @@ import { UserService } from "../model/service/UserService";
 import { StatusService } from "../model/service/StatusService";
 
 export const handler = async (event: PostStatusRequest): Promise<TweeterResponse> => {
-    try {
-        await new StatusService().postStatus(event);
-        return new TweeterResponse(true);
-    } catch (error) {
-        if (error instanceof Error){
-            return new TweeterResponse(false, error.message);
-        }
-        else {
-            return new TweeterResponse(false);
-        }
-    }
+    let request = JSON.parse(JSON.stringify(event));
+    console.log(request);
+    await new StatusService().postStatus(request);
+    return new TweeterResponse(true);
 }

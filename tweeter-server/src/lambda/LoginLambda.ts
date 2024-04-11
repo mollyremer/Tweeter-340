@@ -1,15 +1,8 @@
 import { TweeterResponse, AuthenticateResponse, LoginRequest, User, AuthToken } from "tweeter-shared";
 import { UserService } from "../model/service/UserService";
 
-export const loginLambda = async (event: LoginRequest): Promise<TweeterResponse> => {
-    try {
-        return new AuthenticateResponse(...await new UserService().login(event), true);
-    } catch (error) {
-        if (error instanceof Error){
-            return new AuthenticateResponse(null, null, false, error.message);
-        }
-        else {
-            return new AuthenticateResponse(null, null, false);
-        }
-    }
+export const handler = async (event: LoginRequest): Promise<TweeterResponse> => {
+    let request = JSON.parse(JSON.stringify(event));
+    console.log(request);
+    return new AuthenticateResponse(...await new UserService().login(request), true);
 }

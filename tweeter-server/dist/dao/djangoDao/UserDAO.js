@@ -11,10 +11,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserDAO = void 0;
 const lib_dynamodb_1 = require("@aws-sdk/lib-dynamodb");
-const client_dynamodb_1 = require("@aws-sdk/client-dynamodb");
 const tweeter_shared_1 = require("tweeter-shared");
 class UserDAO {
-    constructor() {
+    constructor(client) {
         this.tableName = "user";
         this.firstName = "firstName";
         this.lastName = "lastName";
@@ -23,7 +22,7 @@ class UserDAO {
         this.password = "password";
         this.followerCount = "followerCount";
         this.followeeCount = "followeeCount";
-        this.client = lib_dynamodb_1.DynamoDBDocumentClient.from(new client_dynamodb_1.DynamoDBClient());
+        this.client = client;
     }
     put(user, password, followerCount, followeeCount) {
         return __awaiter(this, void 0, void 0, function* () {

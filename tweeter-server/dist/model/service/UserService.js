@@ -28,7 +28,7 @@ class UserService extends Service_1.Service {
     register(request) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.DAO.userDAO.put(new tweeter_shared_1.User(request.firstName, request.lastName, request.alias, request.userImageBytes), request.password);
-            return this.login(new tweeter_shared_1.LoginRequest(request.alias, request.password));
+            return yield this.login(new tweeter_shared_1.LoginRequest(request.alias, request.password));
         });
     }
     ;

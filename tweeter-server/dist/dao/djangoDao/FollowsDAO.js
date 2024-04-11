@@ -11,18 +11,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FollowsDAO = void 0;
 const lib_dynamodb_1 = require("@aws-sdk/lib-dynamodb");
-const client_dynamodb_1 = require("@aws-sdk/client-dynamodb");
 const tweeter_shared_1 = require("tweeter-shared");
 const DataPage_1 = require("./DataPage");
 class FollowsDAO {
-    constructor() {
+    constructor(client) {
         this.tableName = "follows";
         this.indexName = "follows_index";
         this.followerHandle = "followerHandle";
         this.followeeHandle = "followeeHandle";
         this.follower = "follower";
         this.followee = "followee";
-        this.client = lib_dynamodb_1.DynamoDBDocumentClient.from(new client_dynamodb_1.DynamoDBClient());
+        this.client = client;
     }
     put(follow) {
         return __awaiter(this, void 0, void 0, function* () {

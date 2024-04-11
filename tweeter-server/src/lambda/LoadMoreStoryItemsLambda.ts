@@ -5,15 +5,7 @@ import { GetPageOfStatusesResponse, GetPageOfUsersResponse } from "tweeter-share
 import { StatusService } from "../model/service/StatusService";
 
 export const handler = async (event: loadMoreStatusItemsRequest): Promise<GetPageOfStatusesResponse> => {
-    try {
-        return new GetPageOfStatusesResponse(...await new StatusService().loadMoreStoryItems(event), true);
-    } catch (error) {
-        let badStatuses: Status[] = [];
-        if (error instanceof Error){
-            return new GetPageOfStatusesResponse(badStatuses, false, false, error.message);
-        }
-        else {
-            return new GetPageOfStatusesResponse(badStatuses, false, false);
-        }
-    }
+    let request = JSON.parse(JSON.stringify(event));
+    console.log(request);
+    return new GetPageOfStatusesResponse(...await new StatusService().loadMoreStoryItems(request), true);
 }

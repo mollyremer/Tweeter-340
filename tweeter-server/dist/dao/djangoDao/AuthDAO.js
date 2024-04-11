@@ -11,15 +11,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthDAO = void 0;
 const lib_dynamodb_1 = require("@aws-sdk/lib-dynamodb");
-const client_dynamodb_1 = require("@aws-sdk/client-dynamodb");
 const tweeter_shared_1 = require("tweeter-shared");
 class AuthDAO {
-    constructor() {
+    constructor(client) {
         this.tableName = "authToken";
         this.token = "token";
-        this.timestamp = "timestamp";
+        this.timestamp = "time-stamp";
         this.alias = "alias";
-        this.client = lib_dynamodb_1.DynamoDBDocumentClient.from(new client_dynamodb_1.DynamoDBClient());
+        this.client = client;
     }
     put(alias, password) {
         return __awaiter(this, void 0, void 0, function* () {

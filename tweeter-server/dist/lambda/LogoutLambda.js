@@ -14,7 +14,8 @@ const tweeter_shared_1 = require("tweeter-shared");
 const UserService_1 = require("../model/service/UserService");
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let logout = yield new UserService_1.UserService().logout(event);
+        let request = JSON.parse(JSON.stringify(event));
+        yield new UserService_1.UserService().logout(request);
         return new tweeter_shared_1.TweeterResponse(true);
     }
     catch (error) {

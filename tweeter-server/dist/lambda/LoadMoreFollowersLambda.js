@@ -14,7 +14,8 @@ const FollowService_1 = require("../model/service/FollowService");
 const TweeterResponse_1 = require("tweeter-shared/dist/model/net/TweeterResponse");
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return new TweeterResponse_1.GetPageOfUsersResponse(...yield new FollowService_1.FollowService().loadMoreFollowers(event), true);
+        let request = JSON.parse(JSON.stringify(event));
+        return new TweeterResponse_1.GetPageOfUsersResponse(...yield new FollowService_1.FollowService().loadMoreFollowers(request), true);
     }
     catch (error) {
         let badUsers = [];

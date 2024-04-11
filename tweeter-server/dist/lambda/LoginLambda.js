@@ -9,12 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginLambda = void 0;
+exports.handler = void 0;
 const tweeter_shared_1 = require("tweeter-shared");
 const UserService_1 = require("../model/service/UserService");
-const loginLambda = (event) => __awaiter(void 0, void 0, void 0, function* () {
+const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return new tweeter_shared_1.AuthenticateResponse(...yield new UserService_1.UserService().login(event), true);
+        let request = JSON.parse(JSON.stringify(event));
+        return new tweeter_shared_1.AuthenticateResponse(...yield new UserService_1.UserService().login(request), true);
     }
     catch (error) {
         if (error instanceof Error) {
@@ -25,4 +26,4 @@ const loginLambda = (event) => __awaiter(void 0, void 0, void 0, function* () {
         }
     }
 });
-exports.loginLambda = loginLambda;
+exports.handler = handler;

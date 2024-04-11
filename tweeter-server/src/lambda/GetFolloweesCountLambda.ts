@@ -2,14 +2,7 @@ import { GetFollowerCountRequest, GetCountResponse, GetFolloweesCountRequest } f
 import { UserService } from "../model/service/UserService";
 
 export const handler = async (event: GetFolloweesCountRequest): Promise<GetCountResponse> => {
-    try {
-        return new GetCountResponse(await new UserService().getFolloweesCount(event), true);
-    } catch (error) {
-        if (error instanceof Error){
-            return new GetCountResponse(0, false, error.message);
-        }
-        else {
-            return new GetCountResponse(0, false);
-        }
-    }
+    let request = JSON.parse(JSON.stringify(event));
+    console.log(request);
+    return new GetCountResponse(await new UserService().getFolloweesCount(request), true);
 }
