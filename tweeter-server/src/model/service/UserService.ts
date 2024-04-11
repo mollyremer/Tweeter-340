@@ -1,5 +1,5 @@
 import { User, AuthToken, FakeData, LoginRequest, RegisterRequest, LogoutRequest, GetUserRequest, GetIsFollowerStatusRequest, GetFolloweesCountRequest, PostStatusRequest, GetFollowerCountRequest, followToggleRequest } from "tweeter-shared";
-import { DAOFactory } from "../../dao/DAOFactory";
+import { DAOFactory } from "../../dao/djangoDao/DAOFactory";
 
 export class UserService{
     private DAO: DAOFactory = new DAOFactory;

@@ -9,13 +9,13 @@ import {
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { Status } from "tweeter-shared";
 import { DataPage } from "./DataPage";
-import { StatusDAOInterface } from "../DAOInterfaces";
+import { StatusDAOInterface } from "./DAOInterfaces";
 
 export class StoryDAO implements StatusDAOInterface{
     readonly tableName = "story";
     readonly indexName = "story-index";
     readonly authorAlias = "authorAlias";
-    readonly timestamp = "timestamp";
+    readonly timestamp = "time-stamp";
     readonly jsonPost = "jsonPost";
 
     private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());

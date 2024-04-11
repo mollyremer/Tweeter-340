@@ -1,7 +1,7 @@
 import { AuthToken, User, FakeData, Follow } from "tweeter-shared";
 import { GetIsFollowerStatusRequest, followToggleRequest, loadMoreFollowsRequest } from "tweeter-shared/dist/model/net/TweeterRequest";
 import { DataPage } from "../../dao/djangoDao/DataPage";
-import { DAOFactory } from "../../dao/DAOFactory";
+import { DAOFactory } from "../../dao/djangoDao/DAOFactory";
 
 export class FollowService {
     private DAO: DAOFactory = new DAOFactory;

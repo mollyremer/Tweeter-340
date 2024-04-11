@@ -6,7 +6,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { AuthToken } from "tweeter-shared";
-import { AuthDAOInterface } from "../DAOInterfaces";
+import { AuthDAOInterface } from "./DAOInterfaces";
 
 export class AuthDAO implements AuthDAOInterface{
     readonly tableName = "authToken";

@@ -1,9 +1,9 @@
-import { AuthDAO } from "./djangoDao/AuthDAO";
+import { AuthDAO } from "./AuthDAO";
 import { AuthDAOInterface, FollowsDAOInterface, StatusDAOInterface, UserDAOInterface } from "./DAOInterfaces";
-import { FeedDAO } from "./djangoDao/FeedDAO";
-import { StoryDAO } from "./djangoDao/StoryDAO";
-import { UserDAO } from "./djangoDao/UserDAO";
-import { FollowsDAO } from "./djangoDao/FollowsDAO";
+import { FeedDAO } from "./FeedDAO";
+import { StoryDAO } from "./StoryDAO";
+import { UserDAO } from "./UserDAO";
+import { FollowsDAO } from "./FollowsDAO";
 
 export interface DAOFactoryInterface {
     authDAO: AuthDAOInterface;

@@ -1,5 +1,5 @@
 import { AuthToken, Follow, Status, User } from "tweeter-shared";
-import { DataPage } from "./djangoDao/DataPage";
+import { DataPage } from "./DataPage";
 
 export interface AuthDAOInterface {
     put(password: string): Promise<AuthToken>;

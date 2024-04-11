@@ -1,6 +1,6 @@
 import { Status, FakeData } from "tweeter-shared";
 import { PostStatusRequest, loadMoreStatusItemsRequest } from "tweeter-shared/dist/model/net/TweeterRequest";
-import { DAOFactory } from "../../dao/DAOFactory";
+import { DAOFactory } from "../../dao/djangoDao/DAOFactory";
 import { DataPage } from "../../dao/djangoDao/DataPage";
 
 export class StatusService {

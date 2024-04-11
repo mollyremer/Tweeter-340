@@ -9,7 +9,7 @@ import {
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { Follow, User } from "tweeter-shared";
 import { DataPage } from "./DataPage";
-import { FollowsDAOInterface } from "../DAOInterfaces";
+import { FollowsDAOInterface } from "./DAOInterfaces";
 
 
 export class FollowsDAO implements FollowsDAOInterface {
