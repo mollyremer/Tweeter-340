@@ -1,7 +1,7 @@
-import { AuthenticateResponse, LoginRequest, LogoutRequest, RegisterRequest, TweeterResponse, GetUserRequest, GetUserResponse, GetIsFollowerStatusRequest, GetIsFollowerStatusResponse, GetFolloweesCountRequest, GetCountResponse, GetFollowerCountRequest, PostStatusRequest } from "tweeter-shared";
+import { AuthenticateResponse, LoginRequest, LogoutRequest, RegisterRequest, TweeterResponse, GetUserRequest, GetUserResponse, GetIsFollowerStatusRequest, GetIsFollowerStatusResponse, GetFolloweesCountRequest, GetCountResponse, GetFollowerCountRequest, PostStatusRequest, FollowToggleResponse, followToggleRequest} from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
-import { followToggleRequest, loadMoreFollowsRequest, loadMoreStatusItemsRequest } from "tweeter-shared/dist/model/net/TweeterRequest";
-import { FollowToggleResponse, GetPageOfStatusesResponse, GetPageOfUsersResponse } from "tweeter-shared/dist/model/net/TweeterResponse";
+import { loadMoreStatusItemsRequest, loadMoreFollowsRequest } from "tweeter-shared/dist/model/net/TweeterRequest";
+import { GetPageOfStatusesResponse, GetPageOfUsersResponse } from "tweeter-shared/dist/model/net/TweeterResponse";
 
 export class ServerFacade {
 

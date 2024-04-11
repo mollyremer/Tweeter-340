@@ -1,5 +1,4 @@
 
-
 export { Follow } from "./model/domain/Follow";
 export { PostSegment, Type } from "./model/domain/PostSegment";
 export { Status } from "./model/domain/Status";
@@ -19,5 +18,6 @@ export { GetUserRequest } from "./model/net/TweeterRequest";
 export { GetUserResponse } from "./model/net/TweeterResponse";
 export { GetFollowerCountRequest, GetFolloweesCountRequest, GetIsFollowerStatusRequest, PostStatusRequest } from "./model/net/TweeterRequest";
 export { GetCountResponse, GetIsFollowerStatusResponse } from "./model/net/TweeterResponse";
+export { loadMoreFollowsRequest, loadMoreStatusItemsRequest } from "./model/net/TweeterRequest";
 export { followToggleRequest } from "./model/net/TweeterRequest";
-export { FollowToggleResponse } from "./model/net/TweeterResponse";
+export { FollowToggleResponse, GetPageOfStatusesResponse } from "./model/net/TweeterResponse";
