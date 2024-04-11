@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FollowService = void 0;
 const tweeter_shared_1 = require("tweeter-shared");
-const TweeterRequest_1 = require("tweeter-shared/dist/model/net/TweeterRequest");
 const DAOFactory_1 = require("../../dao/DAOFactory");
 class FollowService {
     constructor() {
@@ -43,7 +42,7 @@ class FollowService {
             if (authToken === null) {
                 throw new Error("[Bad Request] Invalid authToken, please log back in");
             }
-            yield this.DAO.followsDAO.put(new tweeter_shared_1.Follow());
+            yield this.DAO.followsDAO.put(new tweeter_shared_1.Follow(request.currentUser, request.userToFollow));
             yield new Promise((f) => setTimeout(f, 2000));
             return;
         });
@@ -51,6 +50,11 @@ class FollowService {
     ;
     unfollow(request) {
         return __awaiter(this, void 0, void 0, function* () {
+            let authToken = yield this.DAO.authDAO.get(request.authToken.token);
+            if (authToken === null) {
+                throw new Error("[Bad Request] Invalid authToken, please log back in");
+            }
+            yield this.DAO.followsDAO.delete(new tweeter_shared_1.Follow(request.currentUser, request.userToFollow));
             yield new Promise((f) => setTimeout(f, 2000));
             return;
         });
@@ -58,14 +62,11 @@ class FollowService {
     ;
     getIsFollowerStatus(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (request instanceof TweeterRequest_1.GetIsFollowerStatusRequest) {
-                throw new Error("[Bad Request] Invalid authToken or user");
-            }
-            let isFollower = tweeter_shared_1.FakeData.instance.isFollower();
+            let isFollower = yield this.DAO.followsDAO.get(new tweeter_shared_1.Follow(request.user, request.selectedUser));
             if (isFollower === null) {
                 throw new Error("[Internal Server Error] Unknown error in getIsFollowerStatus");
             }
-            return isFollower;
+            return true;
         });
     }
     ;
