@@ -17,6 +17,7 @@ export class UserDAO implements UserDAOInterface {
     readonly alias = "alias";
     readonly imageUrl = "string";
     readonly password = "password";
+    readonly salt = "salt"
     readonly followerCount = "followerCount";
     readonly followeeCount = "followeeCount";
 
@@ -26,6 +27,10 @@ export class UserDAO implements UserDAOInterface {
     }
 
     async put(user: User, password: String, followerCount?: number, followeeCount?: number): Promise<void> {
+        const salt = CryptoJS.lib.WordArray.random(128 / 8).toString();
+        const hash = CryptoJS.SHA256(password + salt);
+        const hashedPassword = hash.toString(CryptoJS.enc.Base64);
+
         const params = {
             TableName: this.tableName,
             Item: {
@@ -33,7 +38,8 @@ export class UserDAO implements UserDAOInterface {
                 [this.lastName]: user.lastName,
                 [this.alias]: user.alias,
                 [this.imageUrl]: user.imageUrl,
-                [this.password]: password,
+                [this.password]: hashedPassword,
+                [this.salt]: salt,
                 [this.followerCount]: followerCount ? followerCount : 0,
                 [this.followeeCount]: followeeCount ? followeeCount : 0
             },
@@ -66,6 +72,17 @@ export class UserDAO implements UserDAOInterface {
         return output.Item == undefined
             ? null
             : output.Item[this.password];
+    }
+
+    async getSalt(alias: string): Promise<string | null> {
+        const params = {
+            TableName: this.tableName,
+            Key: this.generateKey(alias),
+        };
+        const output = await this.client.send(new GetCommand(params))
+        return output.Item == undefined
+            ? null
+            : output.Item[this.salt];
     }
 
     async getFollowerCount(alias: string): Promise<number> {

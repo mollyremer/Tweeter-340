@@ -13,18 +13,8 @@ exports.handler = void 0;
 const FollowService_1 = require("../model/service/FollowService");
 const TweeterResponse_1 = require("tweeter-shared/dist/model/net/TweeterResponse");
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        let request = JSON.parse(JSON.stringify(event));
-        return new TweeterResponse_1.GetPageOfUsersResponse(...yield new FollowService_1.FollowService().loadMoreFollowees(request), true);
-    }
-    catch (error) {
-        let badUsers = [];
-        if (error instanceof Error) {
-            return new TweeterResponse_1.GetPageOfUsersResponse(badUsers, false, false, error.message);
-        }
-        else {
-            return new TweeterResponse_1.GetPageOfUsersResponse(badUsers, false, false);
-        }
-    }
+    let request = JSON.parse(JSON.stringify(event));
+    console.log(request);
+    return new TweeterResponse_1.GetPageOfUsersResponse(...yield new FollowService_1.FollowService().loadMoreFollowees(request), true);
 });
 exports.handler = handler;

@@ -29,7 +29,9 @@ export class FollowService {
     public async follow(
         request: followToggleRequest
     ): Promise<void> {
+        console.log(request.authToken);
         let authToken = await this.DAO.authDAO.get(request.authToken.token);
+        console.log(authToken);
         if (authToken === null) { throw new Error("[Bad Request] Invalid authToken, please log back in"); }
         
         await this.DAO.followsDAO.put(new Follow(request.currentUser, request.userToFollow));

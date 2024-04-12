@@ -6,9 +6,8 @@ export class UserService extends Service{
     public async login(
         request: LoginRequest
     ): Promise<[User, AuthToken]> {
-        let user = await this.DAO.userDAO.getUser(request.username);
+        let user = await this.authenticateUser(request.username, request.password);
         let authToken = await this.DAO.authDAO.put(request.username, request.password);
-        await this.authenticateUser(request.username, request.password);
 
         if ((user === null) || (authToken === null)) {
             throw new Error("[Internal Server Error] Invalid user or authToken");
@@ -20,7 +19,8 @@ export class UserService extends Service{
     public async register(
         request: RegisterRequest
     ): Promise<[User, AuthToken]> {
-        await this.DAO.userDAO.put(new User(request.firstName, request.lastName, request.alias, request.userImageBytes), request.password);
+        let imageURL = await this.DAO.imageDAO.putImage((request.alias + "-profile-pic"), request.userImageBytes);
+        await this.DAO.userDAO.put(new User(request.firstName, request.lastName, request.alias, imageURL), request.password);
         return await this.login(new LoginRequest(request.alias, request.password));
     };
 

@@ -13,17 +13,8 @@ exports.handler = void 0;
 const tweeter_shared_1 = require("tweeter-shared");
 const UserService_1 = require("../model/service/UserService");
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        let request = JSON.parse(JSON.stringify(event));
-        return new tweeter_shared_1.GetCountResponse(yield new UserService_1.UserService().getFollowerCount(request), true);
-    }
-    catch (error) {
-        if (error instanceof Error) {
-            return new tweeter_shared_1.GetCountResponse(0, false, error.message);
-        }
-        else {
-            return new tweeter_shared_1.GetCountResponse(0, false);
-        }
-    }
+    let request = JSON.parse(JSON.stringify(event));
+    console.log(request);
+    return new tweeter_shared_1.GetCountResponse(yield new UserService_1.UserService().getFollowerCount(request), true);
 });
 exports.handler = handler;

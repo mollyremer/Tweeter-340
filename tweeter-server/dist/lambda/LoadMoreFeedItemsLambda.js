@@ -13,18 +13,8 @@ exports.handler = void 0;
 const TweeterResponse_1 = require("tweeter-shared/dist/model/net/TweeterResponse");
 const StatusService_1 = require("../model/service/StatusService");
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        let request = JSON.parse(JSON.stringify(event));
-        return new TweeterResponse_1.GetPageOfStatusesResponse(...yield new StatusService_1.StatusService().loadMoreFeedItems(event), true);
-    }
-    catch (error) {
-        let badStatuses = [];
-        if (error instanceof Error) {
-            return new TweeterResponse_1.GetPageOfStatusesResponse(badStatuses, false, false, error.message);
-        }
-        else {
-            return new TweeterResponse_1.GetPageOfStatusesResponse(badStatuses, false, false);
-        }
-    }
+    let request = JSON.parse(JSON.stringify(event));
+    console.log(request);
+    return new TweeterResponse_1.GetPageOfStatusesResponse(...yield new StatusService_1.StatusService().loadMoreFeedItems(request), true);
 });
 exports.handler = handler;

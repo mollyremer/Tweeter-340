@@ -1,6 +1,7 @@
 import {
     S3Client,
     PutObjectCommand,
+    GetObjectCommand,
     ObjectCannedACL,
 } from "@aws-sdk/client-s3";
 import { ImageDAOInterface } from "./DAOInterfaces";

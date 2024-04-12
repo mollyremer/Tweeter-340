@@ -23,6 +23,7 @@ export interface UserDAOInterface {
     put(user: User, password: string): Promise<void>;
     getUser(alias: string): Promise<User | null>;
     getPassword(alias: string): Promise<string | null>;
+    getSalt(alias: string): Promise<string | null>;
     getFollowerCount(alias: string): Promise<number>;
     getFolloweeCount(alias: string): Promise<number>;
     updateFollowerCount(alias: string, update: number): Promise<void>;

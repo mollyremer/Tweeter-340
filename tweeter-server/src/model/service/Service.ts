@@ -1,3 +1,4 @@
+import { User } from "tweeter-shared";
 import { DAOFactory } from "../../dao/djangoDao/DAOFactory";
 
 export class Service{
@@ -6,11 +7,24 @@ export class Service{
     public async authenticateUser(
         alias: string,
         password: string
-    ): Promise<void>{
-        let realPassword = await this.DAO.userDAO.getPassword(alias);
+    ): Promise<User>{
+        const user = await this.DAO.userDAO.getUser(alias);
+        const realPassword = await this.DAO.userDAO.getPassword(alias);
+        const salt = await this.DAO.userDAO.getSalt(alias);
 
-        if (realPassword != password){
+        if (user === null) {
+            throw new Error("[Bad Request] User not found");
+        }
+
+        const hash = CryptoJS.SHA256(password + salt);
+        const hashedPassword = hash.toString(CryptoJS.enc.Base64);
+
+        const authenticated = (hashedPassword === realPassword);
+
+        if (!authenticated) {
             throw new Error("[Bad Request] Invalid username or password");
         }
+
+        return user;
     }
 }
