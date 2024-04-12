@@ -6,31 +6,32 @@ import {
     QueryCommand
 } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { Status } from "tweeter-shared";
+import { PostSegment, Status, User } from "tweeter-shared";
 import { DataPage } from "./DataPage";
 import { StatusDAOInterface } from "./DAOInterfaces";
+import { UserDAO } from "./UserDAO";
 
-export class FeedDAO implements StatusDAOInterface{
+export class FeedDAO implements StatusDAOInterface {
     readonly tableName = "feed";
     readonly indexName = "feed-index";
     readonly followerAlias = "followerAlias";
     readonly timestamp = "time-stamp";
-    readonly jsonPost = "jsonPost";
+    readonly postAlias = "postAlias";
+    readonly post = "post";
 
     private readonly client;
-    constructor(client: DynamoDBDocumentClient){
+    constructor(client: DynamoDBDocumentClient) {
         this.client = client;
     }
-    
+
     async put(status: Status, followerAlias: string): Promise<void> {
-        let jsonPost = status.toJson();
-        console.log(jsonPost);
         const params = {
             TableName: this.tableName,
             Item: {
                 [this.followerAlias]: followerAlias,
                 [this.timestamp]: status.timestamp,
-                [this.jsonPost]: jsonPost
+                [this.postAlias]: status.user.alias,
+                [this.post]: status.post
             },
         };
         await this.client.send(new PutCommand(params));
@@ -61,9 +62,11 @@ export class FeedDAO implements StatusDAOInterface{
             Key: this.generateKey(followerAlias, status.timestamp),
         };
         const output = await this.client.send(new GetCommand(params));
+        let userDAO = new UserDAO(this.client);
+        let user = await userDAO.getUser(this.postAlias);
         return output.Item == undefined
             ? undefined
-            : Status.fromJson(output.Item[this.jsonPost])!;
+            : new Status(output.Item[this.post], user!, output.Item[this.timestamp])!;
     }
 
     async getPage(followerAlias: string, pageSize: number): Promise<DataPage<Status>> {
@@ -82,10 +85,11 @@ export class FeedDAO implements StatusDAOInterface{
         const items: Status[] = [];
         const data = await this.client.send(new QueryCommand(params));
         const hasMorePages = data.LastEvaluatedKey !== undefined;
-        data.Items?.forEach((items) =>
-            items.push(
-                Status.fromJson(JSON.stringify(this.jsonPost))!
-            )
+        data.Items?.forEach(async (items) => {
+            let userDAO = new UserDAO(this.client);
+            let user = await userDAO.getUser(this.postAlias);
+            items.push(new Status(items[this.post], user!, items[this.timestamp]));
+        }
         )
         return new DataPage<Status>(items, hasMorePages);
     }

@@ -13,25 +13,26 @@ exports.FeedDAO = void 0;
 const lib_dynamodb_1 = require("@aws-sdk/lib-dynamodb");
 const tweeter_shared_1 = require("tweeter-shared");
 const DataPage_1 = require("./DataPage");
+const UserDAO_1 = require("./UserDAO");
 class FeedDAO {
     constructor(client) {
         this.tableName = "feed";
         this.indexName = "feed-index";
         this.followerAlias = "followerAlias";
         this.timestamp = "time-stamp";
-        this.jsonPost = "jsonPost";
+        this.postAlias = "postAlias";
+        this.post = "post";
         this.client = client;
     }
     put(status, followerAlias) {
         return __awaiter(this, void 0, void 0, function* () {
-            let jsonPost = status.toJson();
-            console.log(jsonPost);
             const params = {
                 TableName: this.tableName,
                 Item: {
                     [this.followerAlias]: followerAlias,
                     [this.timestamp]: status.timestamp,
-                    [this.jsonPost]: jsonPost
+                    [this.postAlias]: status.user.alias,
+                    [this.post]: status.post
                 },
             };
             yield this.client.send(new lib_dynamodb_1.PutCommand(params));
@@ -64,9 +65,11 @@ class FeedDAO {
                 Key: this.generateKey(followerAlias, status.timestamp),
             };
             const output = yield this.client.send(new lib_dynamodb_1.GetCommand(params));
+            let userDAO = new UserDAO_1.UserDAO(this.client);
+            let user = yield userDAO.getUser(this.postAlias);
             return output.Item == undefined
                 ? undefined
-                : tweeter_shared_1.Status.fromJson(output.Item[this.jsonPost]);
+                : new tweeter_shared_1.Status(output.Item[this.post], user, output.Item[this.timestamp]);
         });
     }
     getPage(followerAlias, pageSize) {
@@ -86,7 +89,11 @@ class FeedDAO {
             const items = [];
             const data = yield this.client.send(new lib_dynamodb_1.QueryCommand(params));
             const hasMorePages = data.LastEvaluatedKey !== undefined;
-            (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((items) => items.push(tweeter_shared_1.Status.fromJson(JSON.stringify(this.jsonPost))));
+            (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((items) => __awaiter(this, void 0, void 0, function* () {
+                let userDAO = new UserDAO_1.UserDAO(this.client);
+                let user = yield userDAO.getUser(this.postAlias);
+                items.push(new tweeter_shared_1.Status(items[this.post], user, items[this.timestamp]));
+            }));
             return new DataPage_1.DataPage(items, hasMorePages);
         });
     }

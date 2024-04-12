@@ -7,16 +7,17 @@ import {
     UpdateCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { Status } from "tweeter-shared";
+import { Status, User } from "tweeter-shared";
 import { DataPage } from "./DataPage";
 import { StatusDAOInterface } from "./DAOInterfaces";
+import { UserDAO } from "./UserDAO";
 
 export class StoryDAO implements StatusDAOInterface{
     readonly tableName = "story";
     readonly indexName = "story-index";
     readonly authorAlias = "authorAlias";
     readonly timestamp = "time-stamp";
-    readonly jsonPost = "jsonPost";
+    readonly post = "post";
 
     private readonly client;
     constructor(client: DynamoDBDocumentClient){
@@ -24,14 +25,12 @@ export class StoryDAO implements StatusDAOInterface{
     }
     
     async put(status: Status, authorAlias: string): Promise <void> {
-        let jsonStatus = status.toJson();
-        console.log(jsonStatus);
         const params = {
             TableName: this.tableName,
             Item: {
                 [this.authorAlias]: authorAlias,
                 [this.timestamp]: status.timestamp,
-                [this.jsonPost]: jsonStatus
+                [this.post]: status.post
             },
         };
         await this.client.send(new PutCommand(params));
@@ -62,9 +61,11 @@ export class StoryDAO implements StatusDAOInterface{
             Key: this.generateKey(authorAlias, status.timestamp),
         };
         const output = await this.client.send(new GetCommand(params));
+        let userDAO = new UserDAO(this.client);
+        let user = await userDAO.getUser(this.authorAlias);
         return output.Item == undefined
             ? undefined
-            : Status.fromJson(output.Item[this.jsonPost])!;
+            : new Status(output.Item[this.post], user!, output.Item[this.timestamp])!;
     }
 
     async getPage(authorAlias: string, pageSize: number): Promise<DataPage<Status>> {
@@ -80,11 +81,13 @@ export class StoryDAO implements StatusDAOInterface{
         const items: Status[] = [];
         const data = await this.client.send(new QueryCommand(params));
         const hasMorePages = data.LastEvaluatedKey !== undefined;
-        data.Items?.forEach((items) => 
-            items.push(
-                Status.fromJson(this.jsonPost)!
-            )
+        data.Items?.forEach(async (items) => {
+            let userDAO = new UserDAO(this.client);
+            let user = await userDAO.getUser(this.authorAlias);
+            items.push(new Status(items[this.post], user!, items[this.timestamp]));
+            }
         )
+        
         return new DataPage<Status>(items, hasMorePages);
     }
     

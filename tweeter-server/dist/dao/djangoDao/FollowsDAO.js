@@ -30,8 +30,8 @@ class FollowsDAO {
                 Item: {
                     [this.followeeHandle]: follow.followee.alias,
                     [this.followerHandle]: follow.follower.alias,
-                    [this.follower]: follow.follower.toJson,
-                    [this.followee]: follow.followee.toJson,
+                    [this.follower]: follow.follower.toJson(),
+                    [this.followee]: follow.followee.toJson(),
                 },
             };
             yield this.client.send(new lib_dynamodb_1.PutCommand(params));
@@ -89,7 +89,7 @@ class FollowsDAO {
             const items = [];
             const data = yield this.client.send(new lib_dynamodb_1.QueryCommand(params));
             const hasMorePages = data.LastEvaluatedKey !== undefined;
-            (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((item) => items.push(tweeter_shared_1.User.fromJson(item[this.followeeHandle])));
+            (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((item) => items.push(tweeter_shared_1.User.fromJson(item[this.followee])));
             return new DataPage_1.DataPage(items, hasMorePages);
         });
     }
@@ -114,7 +114,7 @@ class FollowsDAO {
             const items = [];
             const data = yield this.client.send(new lib_dynamodb_1.QueryCommand(params));
             const hasMorePages = data.LastEvaluatedKey !== undefined;
-            (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((items) => items.push(tweeter_shared_1.User.fromJson(items[this.followerHandle])));
+            (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((items) => items.push(tweeter_shared_1.User.fromJson(items[this.follower])));
             return new DataPage_1.DataPage(items, hasMorePages);
         });
     }

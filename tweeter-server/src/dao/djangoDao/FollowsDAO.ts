@@ -31,8 +31,8 @@ export class FollowsDAO implements FollowsDAOInterface {
             Item: {
                 [this.followeeHandle]: follow.followee.alias,
                 [this.followerHandle]: follow.follower.alias,
-                [this.follower]: follow.follower.toJson,
-                [this.followee]: follow.followee.toJson,
+                [this.follower]: follow.follower.toJson(),
+                [this.followee]: follow.followee.toJson(),
             },
         };
         await this.client.send(new PutCommand(params));
@@ -93,7 +93,7 @@ export class FollowsDAO implements FollowsDAOInterface {
         const hasMorePages = data.LastEvaluatedKey !== undefined;
         data.Items?.forEach((item) =>
             items.push(
-                User.fromJson(item[this.followeeHandle])!
+                User.fromJson(item[this.followee])!
             )
         );
         return new DataPage<User>(items, hasMorePages);
@@ -122,7 +122,7 @@ export class FollowsDAO implements FollowsDAOInterface {
         const hasMorePages = data.LastEvaluatedKey !== undefined;
         data.Items?.forEach((items) =>
             items.push(
-                User.fromJson(items[this.followerHandle])!
+                User.fromJson(items[this.follower])!
             )
         );
 
