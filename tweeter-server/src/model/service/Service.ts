@@ -1,8 +1,8 @@
 import { AuthToken, User } from "tweeter-shared";
-import { DAOFactory, DAOFactoryInterface } from "../../dao/djangoDao/DAOFactory";
+import { DAOFactoryInterface } from "../../dao/djangoDao/DAOFactory";
 
 export class Service {
-    protected DAO: DAOFactoryInterface = new DAOFactory;
+    protected DAO: DAOFactoryInterface;
 
     constructor(DAO: DAOFactoryInterface){
         this.DAO = DAO;
@@ -21,12 +21,8 @@ export class Service {
             throw new Error("[Bad Request] User not found");
         }
 
-        // const hash = CryptoJS.SHA256(password + salt);
-        // const hashedPassword = hash.toString(CryptoJS.enc.Base64);
         let bcrypt = require('bcryptjs');
         let authenticated = bcrypt.compareSync(password, hash);
-
-        // const authenticated = (hashedPassword === realPassword);
 
         if (!authenticated) {
             throw new Error("[Bad Request] Invalid username or password");

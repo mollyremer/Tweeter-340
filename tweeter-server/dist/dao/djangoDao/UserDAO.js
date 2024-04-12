@@ -31,9 +31,6 @@ class UserDAO {
     }
     put(user, password, followerCount, followeeCount) {
         return __awaiter(this, void 0, void 0, function* () {
-            //const salt = CryptoJS.lib.WordArray.random(128 / 8).toString();
-            //const hash = CryptoJS.SHA256(password + salt);
-            // const hashedPassword = hash.toString(CryptoJS.enc.Base64);
             let salt = bcryptjs_1.default.genSaltSync(10);
             let hash = yield bcryptjs_1.default.hash(password, salt);
             const params = {

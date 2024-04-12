@@ -24,12 +24,14 @@ export class StoryDAO implements StatusDAOInterface{
     }
     
     async put(status: Status, authorAlias: string): Promise <void> {
+        let jsonStatus = status.toJson();
+        console.log(jsonStatus);
         const params = {
             TableName: this.tableName,
             Item: {
                 [this.authorAlias]: authorAlias,
                 [this.timestamp]: status.timestamp,
-                [this.jsonPost]: status.toJson
+                [this.jsonPost]: jsonStatus
             },
         };
         await this.client.send(new PutCommand(params));

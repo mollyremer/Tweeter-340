@@ -7,7 +7,7 @@ export const handler = async (event: loadMoreStatusItemsRequest): Promise<GetPag
     let DAO: DAOFactory = new DAOFactory;
 
     console.log(event);
-    let request = JSON.parse(JSON.stringify(event));
+    let request: loadMoreStatusItemsRequest = JSON.parse(JSON.stringify(event));
     console.log(request);
     let [response, hasMoreItems] = await new StatusService(DAO).loadMoreFeedItems(request);
     console.log(response);

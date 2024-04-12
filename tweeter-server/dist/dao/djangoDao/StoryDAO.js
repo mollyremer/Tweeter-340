@@ -24,12 +24,14 @@ class StoryDAO {
     }
     put(status, authorAlias) {
         return __awaiter(this, void 0, void 0, function* () {
+            let jsonStatus = status.toJson();
+            console.log(jsonStatus);
             const params = {
                 TableName: this.tableName,
                 Item: {
                     [this.authorAlias]: authorAlias,
                     [this.timestamp]: status.timestamp,
-                    [this.jsonPost]: status.toJson
+                    [this.jsonPost]: jsonStatus
                 },
             };
             yield this.client.send(new lib_dynamodb_1.PutCommand(params));

@@ -23,12 +23,14 @@ export class FeedDAO implements StatusDAOInterface{
     }
     
     async put(status: Status, followerAlias: string): Promise<void> {
+        let jsonPost = status.toJson();
+        console.log(jsonPost);
         const params = {
             TableName: this.tableName,
             Item: {
                 [this.followerAlias]: followerAlias,
                 [this.timestamp]: status.timestamp,
-                [this.jsonPost]: status.toJson
+                [this.jsonPost]: jsonPost
             },
         };
         await this.client.send(new PutCommand(params));
@@ -66,10 +68,12 @@ export class FeedDAO implements StatusDAOInterface{
 
     async getPage(followerAlias: string, pageSize: number): Promise<DataPage<Status>> {
         console.log("getting page using dao");
+        console.log(followerAlias);
+        console.log(pageSize);
         const params = {
             KeyConditionExpression: this.followerAlias + " = :f",
             ExpressionAttributeValues: {
-                ":f": followerAlias,
+                ":f": followerAlias
             },
             TableName: this.tableName,
             Limit: pageSize,
@@ -80,7 +84,7 @@ export class FeedDAO implements StatusDAOInterface{
         const hasMorePages = data.LastEvaluatedKey !== undefined;
         data.Items?.forEach((items) =>
             items.push(
-                Status.fromJson(this.jsonPost)!
+                Status.fromJson(JSON.stringify(this.jsonPost))!
             )
         )
         return new DataPage<Status>(items, hasMorePages);

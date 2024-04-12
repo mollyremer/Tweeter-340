@@ -28,9 +28,6 @@ export class UserDAO implements UserDAOInterface {
     }
 
     async put(user: User, password: string, followerCount?: number, followeeCount?: number): Promise<void> {
-        //const salt = CryptoJS.lib.WordArray.random(128 / 8).toString();
-        //const hash = CryptoJS.SHA256(password + salt);
-        // const hashedPassword = hash.toString(CryptoJS.enc.Base64);
         let salt = bcrypt.genSaltSync(10);
         let hash = await bcrypt.hash(password, salt);
         const params = {

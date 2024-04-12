@@ -10,10 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Service = void 0;
-const DAOFactory_1 = require("../../dao/djangoDao/DAOFactory");
 class Service {
     constructor(DAO) {
-        this.DAO = new DAOFactory_1.DAOFactory;
         this.DAO = DAO;
     }
     authenticateUser(alias, password) {
@@ -25,11 +23,8 @@ class Service {
             if (user === null) {
                 throw new Error("[Bad Request] User not found");
             }
-            // const hash = CryptoJS.SHA256(password + salt);
-            // const hashedPassword = hash.toString(CryptoJS.enc.Base64);
             let bcrypt = require('bcryptjs');
             let authenticated = bcrypt.compareSync(password, hash);
-            // const authenticated = (hashedPassword === realPassword);
             if (!authenticated) {
                 throw new Error("[Bad Request] Invalid username or password");
             }

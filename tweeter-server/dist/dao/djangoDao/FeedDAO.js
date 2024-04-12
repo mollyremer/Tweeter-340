@@ -24,12 +24,14 @@ class FeedDAO {
     }
     put(status, followerAlias) {
         return __awaiter(this, void 0, void 0, function* () {
+            let jsonPost = status.toJson();
+            console.log(jsonPost);
             const params = {
                 TableName: this.tableName,
                 Item: {
                     [this.followerAlias]: followerAlias,
                     [this.timestamp]: status.timestamp,
-                    [this.jsonPost]: status.toJson
+                    [this.jsonPost]: jsonPost
                 },
             };
             yield this.client.send(new lib_dynamodb_1.PutCommand(params));
@@ -71,10 +73,12 @@ class FeedDAO {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             console.log("getting page using dao");
+            console.log(followerAlias);
+            console.log(pageSize);
             const params = {
                 KeyConditionExpression: this.followerAlias + " = :f",
                 ExpressionAttributeValues: {
-                    ":f": followerAlias,
+                    ":f": followerAlias
                 },
                 TableName: this.tableName,
                 Limit: pageSize,
@@ -82,7 +86,7 @@ class FeedDAO {
             const items = [];
             const data = yield this.client.send(new lib_dynamodb_1.QueryCommand(params));
             const hasMorePages = data.LastEvaluatedKey !== undefined;
-            (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((items) => items.push(tweeter_shared_1.Status.fromJson(this.jsonPost)));
+            (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((items) => items.push(tweeter_shared_1.Status.fromJson(JSON.stringify(this.jsonPost))));
             return new DataPage_1.DataPage(items, hasMorePages);
         });
     }
