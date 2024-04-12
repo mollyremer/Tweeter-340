@@ -1,8 +1,8 @@
 BUCKET='mollys-test-bucket'
 EDIT_LAMBDALIST='
 login
-loadMoreFollowees
 getFollowerCount
+getFolloweesCount
 getIsFollowerStatus
 logout
 unfollow

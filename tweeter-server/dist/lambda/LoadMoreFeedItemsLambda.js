@@ -10,11 +10,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handler = void 0;
-const TweeterResponse_1 = require("tweeter-shared/dist/model/net/TweeterResponse");
+const tweeter_shared_1 = require("tweeter-shared");
 const StatusService_1 = require("../model/service/StatusService");
+const DAOFactory_1 = require("../dao/djangoDao/DAOFactory");
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
+    let DAO = new DAOFactory_1.DAOFactory;
+    console.log(event);
     let request = JSON.parse(JSON.stringify(event));
     console.log(request);
-    return new TweeterResponse_1.GetPageOfStatusesResponse(...yield new StatusService_1.StatusService().loadMoreFeedItems(request), true);
+    let [response, hasMoreItems] = yield new StatusService_1.StatusService(DAO).loadMoreFeedItems(request);
+    console.log(response);
+    console.log(hasMoreItems);
+    return new tweeter_shared_1.GetPageOfStatusesResponse(response, hasMoreItems, true);
 });
 exports.handler = handler;

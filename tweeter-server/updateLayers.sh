@@ -10,7 +10,7 @@ PID=0
 pids=()
 for lambda in $EDIT_LAMBDALIST
 do
-    aws lambda update-function-configuration --function-name  $lambda --layer $LAMBDALAYER_ARN 1>>/dev/null & 
+    aws lambda update-function-configuration --function-name  $lambda --layer arn:aws:lambda:us-east-2:767398014777:layer:tweeter-dependencies:11 1>>/dev/null & 
     echo lambda $i, $lambda, updating lambda layer...
     pids[${i-1}]=$!
     ((i=i+1))

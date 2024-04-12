@@ -11,11 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FollowService = void 0;
 const tweeter_shared_1 = require("tweeter-shared");
-const DAOFactory_1 = require("../../dao/djangoDao/DAOFactory");
-class FollowService {
-    constructor() {
-        this.DAO = new DAOFactory_1.DAOFactory;
-    }
+const Service_1 = require("./Service");
+class FollowService extends Service_1.Service {
     loadMoreFollowers(request) {
         return __awaiter(this, void 0, void 0, function* () {
             let page = yield this.DAO.followsDAO.getPageOfFollowers(request.user.alias, request.pageSize, request.lastItem.alias);
@@ -38,25 +35,31 @@ class FollowService {
     ;
     follow(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            let authToken = yield this.DAO.authDAO.get(request.authToken.token);
-            if (authToken === null) {
-                throw new Error("[Bad Request] Invalid authToken, please log back in");
-            }
+            yield this.validateAuthToken(request.authToken);
+            console.log("putting a follow");
             yield this.DAO.followsDAO.put(new tweeter_shared_1.Follow(request.currentUser, request.userToFollow));
+            console.log("updating follower/ee counts");
+            let followerCount = yield this.DAO.userDAO.updateFollowerCount(request.userToFollow.alias, 1);
+            let followeeCount = yield this.DAO.userDAO.updateFolloweeCount(request.currentUser.alias, 1);
+            console.log(followerCount);
+            console.log(followeeCount);
             yield new Promise((f) => setTimeout(f, 2000));
-            return;
+            return [followerCount, followeeCount];
         });
     }
     ;
     unfollow(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            let authToken = yield this.DAO.authDAO.get(request.authToken.token);
-            if (authToken === null) {
-                throw new Error("[Bad Request] Invalid authToken, please log back in");
-            }
+            yield this.validateAuthToken(request.authToken);
+            console.log("removing a follow");
             yield this.DAO.followsDAO.delete(new tweeter_shared_1.Follow(request.currentUser, request.userToFollow));
+            console.log("updating follower/ee counts");
+            let followerCount = yield this.DAO.userDAO.updateFollowerCount(request.userToFollow.alias, -1);
+            let followeeCount = yield this.DAO.userDAO.updateFolloweeCount(request.currentUser.alias, -1);
+            console.log(followerCount);
+            console.log(followeeCount);
             yield new Promise((f) => setTimeout(f, 2000));
-            return;
+            return [followerCount, followeeCount];
         });
     }
     ;

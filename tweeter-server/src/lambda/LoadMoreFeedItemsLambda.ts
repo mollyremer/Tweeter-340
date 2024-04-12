@@ -1,12 +1,16 @@
-import { TweeterResponse, AuthenticateResponse, LoginRequest, User, AuthToken, Status } from "tweeter-shared";
-import { FollowService } from "../model/service/FollowService";
-import { loadMoreFollowsRequest, loadMoreStatusItemsRequest } from "tweeter-shared/dist/model/net/TweeterRequest";
-import { GetPageOfStatusesResponse, GetPageOfUsersResponse } from "tweeter-shared/dist/model/net/TweeterResponse";
+import { GetPageOfStatusesResponse, loadMoreStatusItemsRequest } from "tweeter-shared";
 import { StatusService } from "../model/service/StatusService";
+import { DAOFactory } from "../dao/djangoDao/DAOFactory";
+
 
 export const handler = async (event: loadMoreStatusItemsRequest): Promise<GetPageOfStatusesResponse> => {
+    let DAO: DAOFactory = new DAOFactory;
+
+    console.log(event);
     let request = JSON.parse(JSON.stringify(event));
     console.log(request);
-    return new GetPageOfStatusesResponse(...await new StatusService().loadMoreFeedItems(request), true);
-
+    let [response, hasMoreItems] = await new StatusService(DAO).loadMoreFeedItems(request);
+    console.log(response);
+    console.log(hasMoreItems);
+    return new GetPageOfStatusesResponse(response, hasMoreItems, true);
 }

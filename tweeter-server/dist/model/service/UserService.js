@@ -15,9 +15,8 @@ const Service_1 = require("./Service");
 class UserService extends Service_1.Service {
     login(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            let user = yield this.DAO.userDAO.getUser(request.username);
+            let user = yield this.authenticateUser(request.username, request.password);
             let authToken = yield this.DAO.authDAO.put(request.username, request.password);
-            yield this.authenticateUser(request.username, request.password);
             if ((user === null) || (authToken === null)) {
                 throw new Error("[Internal Server Error] Invalid user or authToken");
             }
@@ -27,13 +26,15 @@ class UserService extends Service_1.Service {
     ;
     register(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.DAO.userDAO.put(new tweeter_shared_1.User(request.firstName, request.lastName, request.alias, request.userImageBytes), request.password);
+            let imageURL = yield this.DAO.imageDAO.putImage((request.alias + "-profile-pic"), request.userImageBytes);
+            yield this.DAO.userDAO.put(new tweeter_shared_1.User(request.firstName, request.lastName, request.alias, imageURL), request.password);
             return yield this.login(new tweeter_shared_1.LoginRequest(request.alias, request.password));
         });
     }
     ;
     logout(request) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(request);
             yield this.DAO.authDAO.delete(request.authToken.token);
             yield new Promise((res) => setTimeout(res, 1000));
         });
@@ -51,14 +52,18 @@ class UserService extends Service_1.Service {
     ;
     getFollowerCount(request) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("requested count for" + request.user.alias);
             let count = yield this.DAO.userDAO.getFollowerCount(request.user.alias);
+            console.log("followers =" + count);
             return count;
         });
     }
     ;
     getFolloweesCount(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            let count = yield this.DAO.userDAO.getFollowerCount(request.user.alias);
+            console.log("requested count for" + request.user.alias);
+            let count = yield this.DAO.userDAO.getFolloweeCount(request.user.alias);
+            console.log("followees =" + count);
             return count;
         });
     }

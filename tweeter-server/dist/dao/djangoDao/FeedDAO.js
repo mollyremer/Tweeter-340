@@ -70,6 +70,7 @@ class FeedDAO {
     getPage(followerAlias, pageSize) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("getting page using dao");
             const params = {
                 KeyConditionExpression: this.followerAlias + " = :f",
                 ExpressionAttributeValues: {

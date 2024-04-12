@@ -9,6 +9,7 @@ import {
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { User } from "tweeter-shared";
 import { UserDAOInterface } from "./DAOInterfaces";
+import bcrypt from "bcryptjs";
 
 export class UserDAO implements UserDAOInterface {
     readonly tableName = "user";
@@ -22,15 +23,16 @@ export class UserDAO implements UserDAOInterface {
     readonly followeeCount = "followeeCount";
 
     private readonly client;
-    constructor(client: DynamoDBDocumentClient){
+    constructor(client: DynamoDBDocumentClient) {
         this.client = client;
     }
 
-    async put(user: User, password: String, followerCount?: number, followeeCount?: number): Promise<void> {
-        const salt = CryptoJS.lib.WordArray.random(128 / 8).toString();
-        const hash = CryptoJS.SHA256(password + salt);
-        const hashedPassword = hash.toString(CryptoJS.enc.Base64);
-
+    async put(user: User, password: string, followerCount?: number, followeeCount?: number): Promise<void> {
+        //const salt = CryptoJS.lib.WordArray.random(128 / 8).toString();
+        //const hash = CryptoJS.SHA256(password + salt);
+        // const hashedPassword = hash.toString(CryptoJS.enc.Base64);
+        let salt = bcrypt.genSaltSync(10);
+        let hash = await bcrypt.hash(password, salt);
         const params = {
             TableName: this.tableName,
             Item: {
@@ -38,7 +40,7 @@ export class UserDAO implements UserDAOInterface {
                 [this.lastName]: user.lastName,
                 [this.alias]: user.alias,
                 [this.imageUrl]: user.imageUrl,
-                [this.password]: hashedPassword,
+                [this.password]: hash,
                 [this.salt]: salt,
                 [this.followerCount]: followerCount ? followerCount : 0,
                 [this.followeeCount]: followeeCount ? followeeCount : 0
@@ -113,7 +115,7 @@ export class UserDAO implements UserDAOInterface {
         }
     }
 
-    private async getOutput(alias: string){
+    private async getOutput(alias: string) {
         const params = {
             TableName: this.tableName,
             Key: this.generateKey(alias),
@@ -124,24 +126,26 @@ export class UserDAO implements UserDAOInterface {
             : output
     }
 
-    async updateFollowerCount(alias: string, update: number): Promise<void> {
+    async updateFollowerCount(alias: string, update: number): Promise<number> {
         const output = await this.getOutput(alias);
-        if (output === null || output === undefined) { throw new Error ("Internal Server Error: Cannot retrieve user output");}
-        if (output.Item === null || output.Item === undefined) { throw new Error ("Internal Server Error: Cannot retrieve user output");}
-        
+        if (output === null || output === undefined) { throw new Error("Internal Server Error: Cannot retrieve user output"); }
+        if (output.Item === null || output.Item === undefined) { throw new Error("Internal Server Error: Cannot retrieve user output"); }
+
         let followerCount = output.Item[this.followerCount] + update;
 
         await this.put(new User(output.Item[this.firstName], output.Item[this.lastName], output.Item[this.alias], output.Item[this.imageUrl]), output.Item[this.password], followerCount);
+        return await this.getFollowerCount(alias);
     }
-    
-    async updateFolloweeCount(alias: string, update: number): Promise<void> {
+
+    async updateFolloweeCount(alias: string, update: number): Promise<number> {
         const output = await this.getOutput(alias);
-        if (output === null || output === undefined) { throw new Error ("Internal Server Error: Cannot retrieve user output");}
-        if (output.Item === null || output.Item === undefined) { throw new Error ("Internal Server Error: Cannot retrieve user output");}
-        
+        if (output === null || output === undefined) { throw new Error("Internal Server Error: Cannot retrieve user output"); }
+        if (output.Item === null || output.Item === undefined) { throw new Error("Internal Server Error: Cannot retrieve user output"); }
+
         let followeeCount = output.Item[this.followeeCount] + update;
 
         await this.put(new User(output.Item[this.firstName], output.Item[this.lastName], output.Item[this.alias], output.Item[this.imageUrl]), output.Item[this.password], undefined, followeeCount);
+        return await this.getFolloweeCount(alias);
     }
 
 }

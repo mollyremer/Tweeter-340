@@ -12,9 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.handler = void 0;
 const FollowService_1 = require("../model/service/FollowService");
 const TweeterResponse_1 = require("tweeter-shared/dist/model/net/TweeterResponse");
+const DAOFactory_1 = require("../dao/djangoDao/DAOFactory");
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
+    let DAO = new DAOFactory_1.DAOFactory;
     let request = JSON.parse(JSON.stringify(event));
     console.log(request);
-    return new TweeterResponse_1.GetPageOfUsersResponse(...yield new FollowService_1.FollowService().loadMoreFollowees(request), true);
+    return new TweeterResponse_1.GetPageOfUsersResponse(...yield new FollowService_1.FollowService(DAO).loadMoreFollowees(request), true);
 });
 exports.handler = handler;

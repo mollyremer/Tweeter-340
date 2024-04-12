@@ -65,6 +65,7 @@ export class FeedDAO implements StatusDAOInterface{
     }
 
     async getPage(followerAlias: string, pageSize: number): Promise<DataPage<Status>> {
+        console.log("getting page using dao");
         const params = {
             KeyConditionExpression: this.followerAlias + " = :f",
             ExpressionAttributeValues: {

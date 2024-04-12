@@ -1,15 +1,16 @@
-import { Status, FakeData } from "tweeter-shared";
-import { PostStatusRequest, loadMoreStatusItemsRequest } from "tweeter-shared/dist/model/net/TweeterRequest";
+import { Status, FakeData, loadMoreStatusItemsRequest, PostStatusRequest } from "tweeter-shared";
 import { DAOFactory } from "../../dao/djangoDao/DAOFactory";
 import { DataPage } from "../../dao/djangoDao/DataPage";
+import { Service } from "./Service";
 
-export class StatusService {
-    private DAO: DAOFactory = new DAOFactory;
-    
+export class StatusService extends Service{
     public async loadMoreFeedItems(
         request: loadMoreStatusItemsRequest
     ): Promise<[Status[], boolean]> {
+        console.log(request);
         let page: DataPage<Status> = await this.DAO.feedDAO.getPage(request.user.alias, request.pageSize);
+        console.log(page.values);
+        console.log(page.hasMorePages);
         if (((page.values) === null) || (page.hasMorePages === null)){
             throw new Error("[Internal Server Error] Invalid user or authToken");
         }
@@ -29,6 +30,7 @@ export class StatusService {
     public async postStatus(
         request: PostStatusRequest
     ): Promise<void> {
+        console.log(request);
         let authToken = await this.DAO.authDAO.get(request.authToken.token);
         if (authToken === null){
             throw new Error("[Internal Server Error] Invalid authToken");

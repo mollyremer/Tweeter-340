@@ -8,10 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserDAO = void 0;
 const lib_dynamodb_1 = require("@aws-sdk/lib-dynamodb");
 const tweeter_shared_1 = require("tweeter-shared");
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 class UserDAO {
     constructor(client) {
         this.tableName = "user";
@@ -20,12 +24,18 @@ class UserDAO {
         this.alias = "alias";
         this.imageUrl = "string";
         this.password = "password";
+        this.salt = "salt";
         this.followerCount = "followerCount";
         this.followeeCount = "followeeCount";
         this.client = client;
     }
     put(user, password, followerCount, followeeCount) {
         return __awaiter(this, void 0, void 0, function* () {
+            //const salt = CryptoJS.lib.WordArray.random(128 / 8).toString();
+            //const hash = CryptoJS.SHA256(password + salt);
+            // const hashedPassword = hash.toString(CryptoJS.enc.Base64);
+            let salt = bcryptjs_1.default.genSaltSync(10);
+            let hash = yield bcryptjs_1.default.hash(password, salt);
             const params = {
                 TableName: this.tableName,
                 Item: {
@@ -33,7 +43,8 @@ class UserDAO {
                     [this.lastName]: user.lastName,
                     [this.alias]: user.alias,
                     [this.imageUrl]: user.imageUrl,
-                    [this.password]: password,
+                    [this.password]: hash,
+                    [this.salt]: salt,
                     [this.followerCount]: followerCount ? followerCount : 0,
                     [this.followeeCount]: followeeCount ? followeeCount : 0
                 },
@@ -63,6 +74,18 @@ class UserDAO {
             return output.Item == undefined
                 ? null
                 : output.Item[this.password];
+        });
+    }
+    getSalt(alias) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const params = {
+                TableName: this.tableName,
+                Key: this.generateKey(alias),
+            };
+            const output = yield this.client.send(new lib_dynamodb_1.GetCommand(params));
+            return output.Item == undefined
+                ? null
+                : output.Item[this.salt];
         });
     }
     getFollowerCount(alias) {
@@ -117,6 +140,7 @@ class UserDAO {
             }
             let followerCount = output.Item[this.followerCount] + update;
             yield this.put(new tweeter_shared_1.User(output.Item[this.firstName], output.Item[this.lastName], output.Item[this.alias], output.Item[this.imageUrl]), output.Item[this.password], followerCount);
+            return yield this.getFollowerCount(alias);
         });
     }
     updateFolloweeCount(alias, update) {
@@ -130,6 +154,7 @@ class UserDAO {
             }
             let followeeCount = output.Item[this.followeeCount] + update;
             yield this.put(new tweeter_shared_1.User(output.Item[this.firstName], output.Item[this.lastName], output.Item[this.alias], output.Item[this.imageUrl]), output.Item[this.password], undefined, followeeCount);
+            return yield this.getFolloweeCount(alias);
         });
     }
 }

@@ -27,6 +27,7 @@ export class UserService extends Service{
     public async logout(
         request: LogoutRequest
     ): Promise<void> {
+        console.log(request);
         await this.DAO.authDAO.delete(request.authToken.token);
         await new Promise((res) => setTimeout(res, 1000));
     };
@@ -45,14 +46,18 @@ export class UserService extends Service{
     public async getFollowerCount(
         request: GetFollowerCountRequest
     ): Promise<number> {
+        console.log("requested count for" + request.user.alias);
         let count = await this.DAO.userDAO.getFollowerCount(request.user.alias);
+        console.log("followers =" + count);
         return count;
     };
 
     public async getFolloweesCount(
         request: GetFolloweesCountRequest
     ): Promise<number> {
-        let count = await this.DAO.userDAO.getFollowerCount(request.user.alias);
+        console.log("requested count for" + request.user.alias);
+        let count = await this.DAO.userDAO.getFolloweeCount(request.user.alias);
+        console.log("followees =" + count);
         return count;
     };
 }

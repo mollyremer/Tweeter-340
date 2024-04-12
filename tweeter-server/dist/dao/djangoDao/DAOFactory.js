@@ -6,6 +6,7 @@ const FeedDAO_1 = require("./FeedDAO");
 const StoryDAO_1 = require("./StoryDAO");
 const UserDAO_1 = require("./UserDAO");
 const FollowsDAO_1 = require("./FollowsDAO");
+const ImageDAO_1 = require("./ImageDAO");
 const client_dynamodb_1 = require("@aws-sdk/client-dynamodb");
 const lib_dynamodb_1 = require("@aws-sdk/lib-dynamodb");
 class DAOFactory {
@@ -16,6 +17,7 @@ class DAOFactory {
         this.feedDAO = new FeedDAO_1.FeedDAO(this.client);
         this.storyDAO = new StoryDAO_1.StoryDAO(this.client);
         this.followsDAO = new FollowsDAO_1.FollowsDAO(this.client);
+        this.imageDAO = new ImageDAO_1.ImageDAO();
     }
 }
 exports.DAOFactory = DAOFactory;

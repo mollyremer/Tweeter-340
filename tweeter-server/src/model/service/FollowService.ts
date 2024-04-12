@@ -2,10 +2,9 @@ import { AuthToken, User, FakeData, Follow } from "tweeter-shared";
 import { GetIsFollowerStatusRequest, followToggleRequest, loadMoreFollowsRequest } from "tweeter-shared/dist/model/net/TweeterRequest";
 import { DataPage } from "../../dao/djangoDao/DataPage";
 import { DAOFactory } from "../../dao/djangoDao/DAOFactory";
+import { Service } from "./Service";
 
-export class FollowService {
-    private DAO: DAOFactory = new DAOFactory;
-
+export class FollowService extends Service{
     public async loadMoreFollowers(
         request: loadMoreFollowsRequest
     ): Promise<[User[], boolean]> {
@@ -28,26 +27,32 @@ export class FollowService {
 
     public async follow(
         request: followToggleRequest
-    ): Promise<void> {
-        console.log(request.authToken);
-        let authToken = await this.DAO.authDAO.get(request.authToken.token);
-        console.log(authToken);
-        if (authToken === null) { throw new Error("[Bad Request] Invalid authToken, please log back in"); }
-        
+    ): Promise<[number, number]> {
+        await this.validateAuthToken(request.authToken);
+        console.log("putting a follow");
         await this.DAO.followsDAO.put(new Follow(request.currentUser, request.userToFollow));
+        console.log("updating follower/ee counts");
+        let followerCount = await this.DAO.userDAO.updateFollowerCount(request.userToFollow.alias, 1);
+        let followeeCount = await this.DAO.userDAO.updateFolloweeCount(request.currentUser.alias, 1);
+        console.log(followerCount);
+        console.log(followeeCount);
         await new Promise((f) => setTimeout(f, 2000));
-        return;
+        return[followerCount, followeeCount];
     };
 
     public async unfollow(
         request: followToggleRequest
-    ): Promise<void> {
-        let authToken = await this.DAO.authDAO.get(request.authToken.token);
-        if (authToken === null) { throw new Error("[Bad Request] Invalid authToken, please log back in"); }
-        
+    ): Promise<[number, number]> {
+        await this.validateAuthToken(request.authToken);
+        console.log("removing a follow");
         await this.DAO.followsDAO.delete(new Follow(request.currentUser, request.userToFollow));
+        console.log("updating follower/ee counts");
+        let followerCount = await this.DAO.userDAO.updateFollowerCount(request.userToFollow.alias, -1);
+        let followeeCount = await this.DAO.userDAO.updateFolloweeCount(request.currentUser.alias, -1);
+        console.log(followerCount);
+        console.log(followeeCount);
         await new Promise((f) => setTimeout(f, 2000));
-        return;
+        return[followerCount, followeeCount];
     };
 
     public async getIsFollowerStatus(

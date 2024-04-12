@@ -11,14 +11,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StatusService = void 0;
 const tweeter_shared_1 = require("tweeter-shared");
-const DAOFactory_1 = require("../../dao/djangoDao/DAOFactory");
-class StatusService {
-    constructor() {
-        this.DAO = new DAOFactory_1.DAOFactory;
-    }
+const Service_1 = require("./Service");
+class StatusService extends Service_1.Service {
     loadMoreFeedItems(request) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(request);
             let page = yield this.DAO.feedDAO.getPage(request.user.alias, request.pageSize);
+            console.log(page.values);
+            console.log(page.hasMorePages);
             if (((page.values) === null) || (page.hasMorePages === null)) {
                 throw new Error("[Internal Server Error] Invalid user or authToken");
             }
@@ -38,6 +38,7 @@ class StatusService {
     ;
     postStatus(request) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(request);
             let authToken = yield this.DAO.authDAO.get(request.authToken.token);
             if (authToken === null) {
                 throw new Error("[Internal Server Error] Invalid authToken");

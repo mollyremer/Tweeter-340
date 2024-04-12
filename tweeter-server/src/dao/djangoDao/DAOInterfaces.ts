@@ -26,8 +26,8 @@ export interface UserDAOInterface {
     getSalt(alias: string): Promise<string | null>;
     getFollowerCount(alias: string): Promise<number>;
     getFolloweeCount(alias: string): Promise<number>;
-    updateFollowerCount(alias: string, update: number): Promise<void>;
-    updateFolloweeCount(alias: string, update: number): Promise<void>;
+    updateFollowerCount(alias: string, update: number): Promise<number>;
+    updateFolloweeCount(alias: string, update: number): Promise<number>;
 }
 
 export interface FollowsDAOInterface {
