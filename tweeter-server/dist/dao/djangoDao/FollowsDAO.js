@@ -70,8 +70,8 @@ class FollowsDAO {
         });
     }
     getPageOfFollowees(followerHandle, pageSize, lastFolloweeHandle) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const params = {
                 KeyConditionExpression: this.followerHandle + " = :fr",
                 ExpressionAttributeValues: {
@@ -94,8 +94,8 @@ class FollowsDAO {
         });
     }
     getPageOfFollowers(followeeHandle, pageSize, lastFollowerHandle) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const params = {
                 KeyConditionExpression: this.followeeHandle + " = :fe",
                 ExpressionAttributeValues: {

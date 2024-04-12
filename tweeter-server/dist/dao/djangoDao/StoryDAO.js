@@ -71,8 +71,8 @@ class StoryDAO {
         });
     }
     getPage(authorAlias, pageSize) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const params = {
                 KeyConditionExpression: this.authorAlias + " = :f",
                 ExpressionAttributeValues: {

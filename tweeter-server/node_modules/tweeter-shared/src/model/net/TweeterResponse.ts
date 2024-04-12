@@ -112,21 +112,31 @@ export class GetPageOfUsersResponse extends TweeterResponse {
 
     const jsonObject: GetPageOfUsersResponseJson =
       json as unknown as GetPageOfUsersResponseJson;
-    const deserializedUsers = jsonObject._users.map((user) => User.fromJson(JSON.stringify(user)));
+    try {
+      const deserializedUsers = jsonObject._users.map((user) => User.fromJson(JSON.stringify(user)));
 
-    if (deserializedUsers === null) {
-      throw new Error(
-        "GetPageOfUsersResponse, could not deserialize users with json:\n" +
-        JSON.stringify(jsonObject._users)
+      if (deserializedUsers === null) {
+        throw new Error(
+          "GetPageOfUsersResponse, could not deserialize users with json:\n" +
+          JSON.stringify(jsonObject._users)
+        );
+      }
+
+      return new GetPageOfUsersResponse(
+        deserializedUsers.map((user) => user!),
+        jsonObject._hasMorePages,
+        jsonObject._success,
+        jsonObject._message
+      );
+    } catch {
+      let emptyUsersList: User[] = []
+      return new GetPageOfUsersResponse(
+        emptyUsersList,
+        jsonObject._hasMorePages,
+        jsonObject._success,
+        jsonObject._message
       );
     }
-
-    return new GetPageOfUsersResponse(
-      deserializedUsers.map((user) => user!),
-      jsonObject._hasMorePages,
-      jsonObject._success,
-      jsonObject._message
-    );
   }
 
 }
@@ -162,21 +172,31 @@ export class GetPageOfStatusesResponse extends TweeterResponse {
 
     const jsonObject: GetPageOfStatusesResponseJson =
       json as unknown as GetPageOfStatusesResponseJson;
-    const deserializedStatuses = jsonObject._statuses.map((status) => Status.fromJson(JSON.stringify(status)));
+    try {
+      const deserializedStatuses = jsonObject._statuses.map((status) => Status.fromJson(JSON.stringify(status)));
+      if (deserializedStatuses === null) {
+        throw new Error(
+          "GetPageOfStatusesResponse, could not deserialize statuses with json:\n" +
+          JSON.stringify(jsonObject._statuses)
+        );
+      }
 
-    if (deserializedStatuses === null) {
-      throw new Error(
-        "GetPageOfStatusesResponse, could not deserialize statuses with json:\n" +
-        JSON.stringify(jsonObject._statuses)
+      return new GetPageOfStatusesResponse(
+        deserializedStatuses.map((status) => status!),
+        jsonObject._hasMorePages,
+        jsonObject._success,
+        jsonObject._message
+      );
+    } catch {
+      let emptyStatusList: Status[] = []
+      return new GetPageOfStatusesResponse(
+        emptyStatusList,
+        jsonObject._hasMorePages,
+        jsonObject._success,
+        jsonObject._message
       );
     }
 
-    return new GetPageOfStatusesResponse(
-      deserializedStatuses.map((status) => status!),
-      jsonObject._hasMorePages,
-      jsonObject._success,
-      jsonObject._message
-    );
   }
 
 }

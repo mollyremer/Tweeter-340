@@ -73,8 +73,8 @@ class FeedDAO {
         });
     }
     getPage(followerAlias, pageSize) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             console.log("getting page using dao");
             console.log(followerAlias);
             console.log(pageSize);
