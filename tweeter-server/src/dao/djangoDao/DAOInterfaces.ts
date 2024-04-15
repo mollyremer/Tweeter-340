@@ -16,7 +16,7 @@ export interface StatusDAOInterface {
     update(status: Status, alias: string): Promise<void>;
     delete(status: Status, alias: string): Promise<void>;
     get(status: Status, alias: string): Promise<Status | undefined>;
-    getPage(alias: string, pageSize: number, lastItemTimestamp: number, lastItemAlias: string): Promise<DataPage<Status>>
+    getPage(alias: string, pageSize: number, lastItem: Status | null): Promise<DataPage<Status>>
 }
 
 export interface UserDAOInterface {

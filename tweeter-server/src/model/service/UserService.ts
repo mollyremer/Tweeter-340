@@ -35,12 +35,12 @@ export class UserService extends Service{
     public async getUser(
         request: GetUserRequest
     ): Promise<User | null> {
-        let alias = await this.DAO.userDAO.getUser(request.alias);
-        if (alias === null){
+        let user = await this.DAO.userDAO.getUser(request.alias);
+        if (user === null){
             throw new Error("[Internal Server Error] Invalid alias")
         }
 
-        return alias;
+        return user;
     };
 
     public async getFollowerCount(

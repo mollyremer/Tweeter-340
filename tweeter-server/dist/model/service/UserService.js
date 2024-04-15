@@ -42,11 +42,11 @@ class UserService extends Service_1.Service {
     ;
     getUser(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            let alias = yield this.DAO.userDAO.getUser(request.alias);
-            if (alias === null) {
+            let user = yield this.DAO.userDAO.getUser(request.alias);
+            if (user === null) {
                 throw new Error("[Internal Server Error] Invalid alias");
             }
-            return alias;
+            return user;
         });
     }
     ;

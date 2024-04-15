@@ -68,7 +68,7 @@ export class StoryDAO implements StatusDAOInterface{
             : new Status(output.Item[this.post], user!, output.Item[this.timestamp])!;
     }
 
-    async getPage(authorAlias: string, pageSize: number, lastItemTimestamp: number, lastItemAlias: string): Promise<DataPage<Status>> {
+    async getPage(authorAlias: string, pageSize: number, lastItem: Status | null): Promise<DataPage<Status>> {
         const params = {
             KeyConditionExpression: this.authorAlias + " = :f",
             ExpressionAttributeValues: {
@@ -76,16 +76,18 @@ export class StoryDAO implements StatusDAOInterface{
             },
             TableName: this.tableName,
             Limit: pageSize,
-            ExclusiveStartKey: lastItemTimestamp === undefined ? undefined : this.generateKey(lastItemAlias, lastItemTimestamp)
+            ExclusiveStartKey: lastItem === null ? undefined : this.generateKey(lastItem.user.alias, lastItem.timestamp)
         };
 
         const items: Status[] = [];
         const data = await this.client.send(new QueryCommand(params));
         const hasMorePages = data.LastEvaluatedKey !== undefined;
-        data.Items?.forEach(async (items) => {
-            let userDAO = new UserDAO(this.client);
-            let user = await userDAO.getUser(this.authorAlias);
-            let status = new Status(items[this.post], user!, items[this.timestamp]);
+        
+        let userDAO = new UserDAO(this.client);
+        let user = await userDAO.getUser(JSON.stringify(authorAlias));
+            
+        data.Items?.forEach(async (item) => {
+            let status = new Status(item[this.post], user!, item[this.timestamp]);
             console.log(status);
             items.push(status);
             }

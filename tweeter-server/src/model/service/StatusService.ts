@@ -11,20 +11,11 @@ export class StatusService extends Service{
         if (request.user === null){
             throw new Error("[Bad Request] Unknown user");
         }
-        let statuses: Status[] = [];
-        let page: DataPage<Status> = await this.DAO.feedDAO.getPage(request.user.alias, request.pageSize, request.lastItem!.timestamp, request.lastItem!.user.alias);
+        let page: DataPage<Status> = await this.DAO.feedDAO.getPage(request.user.alias, request.pageSize, request.lastItem);
         if (((page.values) === null) || (page.hasMorePages === null)){
             throw new Error("[Internal Server Error] Invalid user or authToken");
         }
-        await page.values.reduce(async (promise, page) => {
-            await promise;
-            let dbUser = await this.DAO.userDAO.getUser(page.user.alias);
-            if (dbUser === null) {
-                throw new Error('[Internal Server Error] Unable to fetch user');
-            }
-            statuses.push(new Status(page.post, dbUser, page.timestamp));
-        }, Promise.resolve());
-        return [statuses, page.hasMorePages];
+        return [page.values, page.hasMorePages];
     };
 
     public async loadMoreStoryItems(
@@ -34,22 +25,11 @@ export class StatusService extends Service{
         if (request.user === null){
             throw new Error("[Bad Request] Unknown user");
         }
-        let statuses: Status[] = [];
-        let page: DataPage<Status> = await this.DAO.feedDAO.getPage(request.user.alias, request.pageSize, request.lastItem!.timestamp, request.lastItem!.user.alias);
+        let page: DataPage<Status> = await this.DAO.storyDAO.getPage(request.user.alias, request.pageSize, request.lastItem);
         if ((page.values === null) || (page.hasMorePages === null)){
             throw new Error("[Internal Server Error] Invalid user or authToken");
         }
-
-        await page.values.reduce(async (promise, page) => {
-            await promise;
-            let dbUser = await this.DAO.userDAO.getUser(page.user.alias);
-            if (dbUser === null) {
-                throw new Error('[Internal Server Error] Unable to fetch user');
-            }
-            statuses.push(new Status(page.post, dbUser, page.timestamp));
-        }, Promise.resolve());
-
-        return [statuses, page.hasMorePages];
+        return [page.values, page.hasMorePages];
     };
 
     public async postStatus(

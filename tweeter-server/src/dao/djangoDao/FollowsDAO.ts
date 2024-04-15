@@ -15,16 +15,16 @@ import { FollowsDAOInterface } from "./DAOInterfaces";
 export class FollowsDAO implements FollowsDAOInterface {
     readonly tableName = "follows";
     readonly indexName = "follows_index";
-    readonly followerHandle = "followerHandle";
-    readonly followeeHandle = "followeeHandle";
+    readonly followerHandle = "follower_handle";
+    readonly followeeHandle = "followee_handle";
     readonly follower = "follower";
     readonly followee = "followee";
 
     private readonly client;
-    constructor(client: DynamoDBDocumentClient){
+    constructor(client: DynamoDBDocumentClient) {
         this.client = client;
     }
-    
+
     async put(follow: Follow): Promise<void> {
         const params = {
             TableName: this.tableName,
@@ -72,6 +72,8 @@ export class FollowsDAO implements FollowsDAOInterface {
     }
 
     async getPageOfFollowees(followerHandle: string, pageSize: number, lastFolloweeHandle: string | null): Promise<DataPage<User>> {
+        console.log(followerHandle);
+        console.log(lastFolloweeHandle);
         const params = {
             KeyConditionExpression: this.followerHandle + " = :fr",
             ExpressionAttributeValues: {
@@ -80,7 +82,7 @@ export class FollowsDAO implements FollowsDAOInterface {
             TableName: this.tableName,
             Limit: pageSize,
             ExclusiveStartKey:
-                lastFolloweeHandle === undefined
+                lastFolloweeHandle === null
                     ? undefined
                     : {
                         [this.followerHandle]: followerHandle,
@@ -93,23 +95,26 @@ export class FollowsDAO implements FollowsDAOInterface {
         const hasMorePages = data.LastEvaluatedKey !== undefined;
         data.Items?.forEach((item) =>
             items.push(
-                User.fromJson(item[this.followee])!
+                User.fromJson(JSON.stringify(item[this.followee]))!
             )
         );
+
         return new DataPage<User>(items, hasMorePages);
     }
 
     async getPageOfFollowers(followeeHandle: string, pageSize: number, lastFollowerHandle: string | null): Promise<DataPage<User>> {
+        console.log(followeeHandle);
+        console.log(lastFollowerHandle);
         const params = {
             KeyConditionExpression: this.followeeHandle + " = :fe",
             ExpressionAttributeValues: {
                 ":fe": followeeHandle,
             },
             TableName: this.tableName,
-            Name: this.indexName,
+            IndexName: this.indexName,
             Limit: pageSize,
             ExclusiveStartKey:
-                lastFollowerHandle === undefined
+                lastFollowerHandle === null
                     ? undefined
                     : {
                         [this.followerHandle]: lastFollowerHandle,
@@ -120,9 +125,9 @@ export class FollowsDAO implements FollowsDAOInterface {
         const items: User[] = [];
         const data = await this.client.send(new QueryCommand(params));
         const hasMorePages = data.LastEvaluatedKey !== undefined;
-        data.Items?.forEach((items) =>
+        data.Items?.forEach((item) => 
             items.push(
-                User.fromJson(items[this.follower])!
+                User.fromJson(JSON.stringify(item[this.follower]))!
             )
         );
 

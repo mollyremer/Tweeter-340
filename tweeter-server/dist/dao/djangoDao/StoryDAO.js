@@ -70,7 +70,7 @@ class StoryDAO {
                 : new tweeter_shared_1.Status(output.Item[this.post], user, output.Item[this.timestamp]);
         });
     }
-    getPage(authorAlias, pageSize, lastItemTimestamp, lastItemAlias) {
+    getPage(authorAlias, pageSize, lastItem) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const params = {
@@ -80,15 +80,16 @@ class StoryDAO {
                 },
                 TableName: this.tableName,
                 Limit: pageSize,
-                ExclusiveStartKey: lastItemTimestamp === undefined ? undefined : this.generateKey(lastItemAlias, lastItemTimestamp)
+                ExclusiveStartKey: lastItem === null ? undefined : this.generateKey(lastItem.user.alias, lastItem.timestamp)
             };
             const items = [];
             const data = yield this.client.send(new lib_dynamodb_1.QueryCommand(params));
             const hasMorePages = data.LastEvaluatedKey !== undefined;
-            (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((items) => __awaiter(this, void 0, void 0, function* () {
-                let userDAO = new UserDAO_1.UserDAO(this.client);
-                let user = yield userDAO.getUser(this.authorAlias);
-                let status = new tweeter_shared_1.Status(items[this.post], user, items[this.timestamp]);
+            let userDAO = new UserDAO_1.UserDAO(this.client);
+            (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((item) => __awaiter(this, void 0, void 0, function* () {
+                let user = yield userDAO.getUser(JSON.stringify(item[this.authorAlias]));
+                console.log("user" + user);
+                let status = new tweeter_shared_1.Status(item[this.post], user, item[this.timestamp]);
                 console.log(status);
                 items.push(status);
             }));

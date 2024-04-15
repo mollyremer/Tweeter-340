@@ -17,8 +17,8 @@ class FollowsDAO {
     constructor(client) {
         this.tableName = "follows";
         this.indexName = "follows_index";
-        this.followerHandle = "followerHandle";
-        this.followeeHandle = "followeeHandle";
+        this.followerHandle = "follower_handle";
+        this.followeeHandle = "followee_handle";
         this.follower = "follower";
         this.followee = "followee";
         this.client = client;
@@ -72,6 +72,8 @@ class FollowsDAO {
     getPageOfFollowees(followerHandle, pageSize, lastFolloweeHandle) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(followerHandle);
+            console.log(lastFolloweeHandle);
             const params = {
                 KeyConditionExpression: this.followerHandle + " = :fr",
                 ExpressionAttributeValues: {
@@ -79,7 +81,7 @@ class FollowsDAO {
                 },
                 TableName: this.tableName,
                 Limit: pageSize,
-                ExclusiveStartKey: lastFolloweeHandle === undefined
+                ExclusiveStartKey: lastFolloweeHandle === null
                     ? undefined
                     : {
                         [this.followerHandle]: followerHandle,
@@ -89,22 +91,24 @@ class FollowsDAO {
             const items = [];
             const data = yield this.client.send(new lib_dynamodb_1.QueryCommand(params));
             const hasMorePages = data.LastEvaluatedKey !== undefined;
-            (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((item) => items.push(tweeter_shared_1.User.fromJson(item[this.followee])));
+            (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((item) => items.push(tweeter_shared_1.User.fromJson(JSON.stringify(item[this.followee]))));
             return new DataPage_1.DataPage(items, hasMorePages);
         });
     }
     getPageOfFollowers(followeeHandle, pageSize, lastFollowerHandle) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(followeeHandle);
+            console.log(lastFollowerHandle);
             const params = {
                 KeyConditionExpression: this.followeeHandle + " = :fe",
                 ExpressionAttributeValues: {
                     ":fe": followeeHandle,
                 },
                 TableName: this.tableName,
-                Name: this.indexName,
+                IndexName: this.indexName,
                 Limit: pageSize,
-                ExclusiveStartKey: lastFollowerHandle === undefined
+                ExclusiveStartKey: lastFollowerHandle === null
                     ? undefined
                     : {
                         [this.followerHandle]: lastFollowerHandle,
@@ -114,7 +118,7 @@ class FollowsDAO {
             const items = [];
             const data = yield this.client.send(new lib_dynamodb_1.QueryCommand(params));
             const hasMorePages = data.LastEvaluatedKey !== undefined;
-            (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((items) => items.push(tweeter_shared_1.User.fromJson(items[this.follower])));
+            (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((item) => items.push(tweeter_shared_1.User.fromJson(JSON.stringify(item[this.follower]))));
             return new DataPage_1.DataPage(items, hasMorePages);
         });
     }
