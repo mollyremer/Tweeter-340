@@ -70,9 +70,9 @@ class StoryDAO {
                 : new tweeter_shared_1.Status(output.Item[this.post], user, output.Item[this.timestamp]);
         });
     }
-    getPage(authorAlias, pageSize) {
+    getPage(authorAlias, pageSize, lastItemTimestamp, lastItemAlias) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            var _a;
             const params = {
                 KeyConditionExpression: this.authorAlias + " = :f",
                 ExpressionAttributeValues: {
@@ -80,6 +80,7 @@ class StoryDAO {
                 },
                 TableName: this.tableName,
                 Limit: pageSize,
+                ExclusiveStartKey: lastItemTimestamp === undefined ? undefined : this.generateKey(lastItemAlias, lastItemTimestamp)
             };
             const items = [];
             const data = yield this.client.send(new lib_dynamodb_1.QueryCommand(params));
@@ -87,7 +88,9 @@ class StoryDAO {
             (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((items) => __awaiter(this, void 0, void 0, function* () {
                 let userDAO = new UserDAO_1.UserDAO(this.client);
                 let user = yield userDAO.getUser(this.authorAlias);
-                items.push(new tweeter_shared_1.Status(items[this.post], user, items[this.timestamp]));
+                let status = new tweeter_shared_1.Status(items[this.post], user, items[this.timestamp]);
+                console.log(status);
+                items.push(status);
             }));
             return new DataPage_1.DataPage(items, hasMorePages);
         });

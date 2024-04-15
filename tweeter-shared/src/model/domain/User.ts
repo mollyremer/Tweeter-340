@@ -75,6 +75,21 @@ export class User {
     }
   }
 
+  public static fromJsonArray(json: string | null | undefined): User[] | null {
+    if (!!json) {
+      let userList: User[] = [];
+      (JSON.parse(json) as User[])?.forEach(jsonUser => {
+        const user: User | null = User.fromJson(JSON.stringify(jsonUser));
+        if (user !== null) {
+          userList.push(user);
+        }
+      });
+      return userList;
+    } else {
+      return null;
+    }
+  }
+
   public toJson(): string {
     return JSON.stringify(this);
   }

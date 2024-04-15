@@ -13,13 +13,22 @@ export class StatusService extends Service{
         if (user === null){
             throw new Error("[Bad Request] Unknown user");
         }
-        let page: DataPage<Status> = await this.DAO.feedDAO.getPage(user.alias, request.pageSize);
-        console.log(page.values);
-        console.log(page.hasMorePages);
+        let lastItem: Status | null = Status.fromJson(JSON.stringify(request.lastItem));
+        let lastItemUser: User | null = User.fromJson(JSON.stringify(lastItem?.user));
+        let statuses: Status[] = [];
+        let page: DataPage<Status> = await this.DAO.feedDAO.getPage(user.alias, request.pageSize, lastItem!.timestamp, lastItemUser!.alias);
         if (((page.values) === null) || (page.hasMorePages === null)){
             throw new Error("[Internal Server Error] Invalid user or authToken");
         }
-        return [page.values, page.hasMorePages];
+        await page.values.reduce(async (promise, page) => {
+            await promise;
+            let dbUser = await this.DAO.userDAO.getUser(page.user.alias);
+            if (dbUser === null) {
+                throw new Error('[Internal Server Error] Unable to fetch user');
+            }
+            statuses.push(new Status(page.post, dbUser, page.timestamp));
+        }, Promise.resolve());
+        return [statuses, page.hasMorePages];
     };
 
     public async loadMoreStoryItems(
@@ -31,11 +40,25 @@ export class StatusService extends Service{
         if (user === null){
             throw new Error("[Bad Request] Unknown user");
         }
-        let page: DataPage<Status> = await this.DAO.feedDAO.getPage(user.alias, request.pageSize);
+        let lastItem: Status | null = Status.fromJson(JSON.stringify(request.lastItem));
+        let lastItemUser: User | null = User.fromJson(JSON.stringify(lastItem?.user));
+        
+        let statuses: Status[] = [];
+        let page: DataPage<Status> = await this.DAO.feedDAO.getPage(user.alias, request.pageSize, lastItem!.timestamp, lastItemUser!.alias);
         if ((page.values === null) || (page.hasMorePages === null)){
             throw new Error("[Internal Server Error] Invalid user or authToken");
         }
-        return [page.values, page.hasMorePages];
+
+        await page.values.reduce(async (promise, page) => {
+            await promise;
+            let dbUser = await this.DAO.userDAO.getUser(page.user.alias);
+            if (dbUser === null) {
+                throw new Error('[Internal Server Error] Unable to fetch user');
+            }
+            statuses.push(new Status(page.post, dbUser, page.timestamp));
+        }, Promise.resolve());
+
+        return [statuses, page.hasMorePages];
     };
 
     public async postStatus(

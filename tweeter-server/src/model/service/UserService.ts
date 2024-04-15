@@ -28,8 +28,7 @@ export class UserService extends Service{
         request: LogoutRequest
     ): Promise<void> {
         console.log(request);
-        let authToken = AuthToken.fromJson(JSON.stringify(request.authToken));
-        await this.DAO.authDAO.delete(authToken!.token);
+        await this.DAO.authDAO.delete(request.authToken.token);
         await new Promise((res) => setTimeout(res, 1000));
     };
 

@@ -21,13 +21,22 @@ class StatusService extends Service_1.Service {
             if (user === null) {
                 throw new Error("[Bad Request] Unknown user");
             }
-            let page = yield this.DAO.feedDAO.getPage(user.alias, request.pageSize);
-            console.log(page.values);
-            console.log(page.hasMorePages);
+            let lastItem = tweeter_shared_1.Status.fromJson(JSON.stringify(request.lastItem));
+            let lastItemUser = tweeter_shared_1.User.fromJson(JSON.stringify(lastItem === null || lastItem === void 0 ? void 0 : lastItem.user));
+            let statuses = [];
+            let page = yield this.DAO.feedDAO.getPage(user.alias, request.pageSize, lastItem.timestamp, lastItemUser.alias);
             if (((page.values) === null) || (page.hasMorePages === null)) {
                 throw new Error("[Internal Server Error] Invalid user or authToken");
             }
-            return [page.values, page.hasMorePages];
+            yield page.values.reduce((promise, page) => __awaiter(this, void 0, void 0, function* () {
+                yield promise;
+                let dbUser = yield this.DAO.userDAO.getUser(page.user.alias);
+                if (dbUser === null) {
+                    throw new Error('[Internal Server Error] Unable to fetch user');
+                }
+                statuses.push(new tweeter_shared_1.Status(page.post, dbUser, page.timestamp));
+            }), Promise.resolve());
+            return [statuses, page.hasMorePages];
         });
     }
     ;
@@ -39,11 +48,22 @@ class StatusService extends Service_1.Service {
             if (user === null) {
                 throw new Error("[Bad Request] Unknown user");
             }
-            let page = yield this.DAO.feedDAO.getPage(user.alias, request.pageSize);
+            let lastItem = tweeter_shared_1.Status.fromJson(JSON.stringify(request.lastItem));
+            let lastItemUser = tweeter_shared_1.User.fromJson(JSON.stringify(lastItem === null || lastItem === void 0 ? void 0 : lastItem.user));
+            let statuses = [];
+            let page = yield this.DAO.feedDAO.getPage(user.alias, request.pageSize, lastItem.timestamp, lastItemUser.alias);
             if ((page.values === null) || (page.hasMorePages === null)) {
                 throw new Error("[Internal Server Error] Invalid user or authToken");
             }
-            return [page.values, page.hasMorePages];
+            yield page.values.reduce((promise, page) => __awaiter(this, void 0, void 0, function* () {
+                yield promise;
+                let dbUser = yield this.DAO.userDAO.getUser(page.user.alias);
+                if (dbUser === null) {
+                    throw new Error('[Internal Server Error] Unable to fetch user');
+                }
+                statuses.push(new tweeter_shared_1.Status(page.post, dbUser, page.timestamp));
+            }), Promise.resolve());
+            return [statuses, page.hasMorePages];
         });
     }
     ;

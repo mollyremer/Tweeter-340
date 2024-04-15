@@ -1,4 +1,4 @@
-import { GetFollowerCountRequest, GetCountResponse, GetFolloweesCountRequest } from "tweeter-shared";
+import { GetFollowerCountRequest, GetCountResponse, GetFolloweesCountRequest, AuthToken, User } from "tweeter-shared";
 import { UserService } from "../model/service/UserService";
 import { DAOFactory } from "../dao/djangoDao/DAOFactory";
 
@@ -6,7 +6,11 @@ export const handler = async (event: GetFolloweesCountRequest): Promise<GetCount
     let DAO: DAOFactory = new DAOFactory;
 
     console.log(event);
-    let request = JSON.parse(JSON.stringify(event));
+    let authToken = AuthToken.fromJson(JSON.stringify(event.authToken));
+    let user = User.fromJson(JSON.stringify(event.user));
+    let request = new GetFolloweesCountRequest(authToken!, user!);
+
+    //let request = JSON.parse(JSON.stringify(event));
     console.log(request);
     let response = await new UserService(DAO).getFolloweesCount(request);
     console.log(response);

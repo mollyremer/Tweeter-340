@@ -6,9 +6,14 @@ import { StatusService } from "../model/service/StatusService";
 import { DAOFactory } from "../dao/djangoDao/DAOFactory";
 
 export const handler = async (event: loadMoreStatusItemsRequest): Promise<GetPageOfStatusesResponse> => {
-    let DAO: DAOFactory = new DAOFactory
+    let DAO: DAOFactory = new DAOFactory;
 
-    let request = JSON.parse(JSON.stringify(event));
+    let authToken = AuthToken.fromJson(JSON.stringify(event.authToken));
+    let user = User.fromJson(JSON.stringify(event.user));
+    let lastItem = Status.fromJson(JSON.stringify(event.lastItem));
+
+    let request = new loadMoreStatusItemsRequest(authToken!, user!, event.pageSize, lastItem);
+    //let request = JSON.parse(JSON.stringify(event));
     console.log(request);
     return new GetPageOfStatusesResponse(...await new StatusService(DAO).loadMoreStoryItems(request), true);
 }

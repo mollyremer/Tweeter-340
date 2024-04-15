@@ -271,6 +271,21 @@ export class Status {
     }
   }
 
+  public static fromJsonArray(json: string | null | undefined): Status[] | null {
+    if (!!json) {
+      let statusList: Status[] = [];
+      (JSON.parse(json) as Status[])?.forEach(jsonStatus => {
+        const status: Status | null = Status.fromJson(JSON.stringify(jsonStatus));
+        if (status !== null) {
+          statusList.push(status);
+        }
+      });
+      return statusList;
+    } else {
+      return null;
+    }
+  }
+
   public toJson(): string {
     return JSON.stringify(this);
   }
