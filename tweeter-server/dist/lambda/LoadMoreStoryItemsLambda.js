@@ -19,9 +19,15 @@ const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     let DAO = new DAOFactory_1.DAOFactory;
     let authToken = tweeter_shared_1.AuthToken.fromJson(JSON.stringify(event.authToken));
     let user = tweeter_shared_1.User.fromJson(JSON.stringify(event.user));
-    let tempLastItem = tweeter_shared_1.Status.fromJson(JSON.stringify(event.lastItem));
-    let userInsideStatus = tweeter_shared_1.User.fromJson(JSON.stringify(tempLastItem.user));
-    let lastItem = new tweeter_shared_1.Status(tempLastItem.post, userInsideStatus, tempLastItem.timestamp);
+    let lastItem;
+    if (event.lastItem != null) {
+        let tempLastItem = tweeter_shared_1.Status.fromJson(JSON.stringify(event.lastItem));
+        let userInsideStatus = tweeter_shared_1.User.fromJson(JSON.stringify(tempLastItem.user));
+        lastItem = new tweeter_shared_1.Status(tempLastItem.post, userInsideStatus, tempLastItem.timestamp);
+    }
+    else {
+        lastItem = null;
+    }
     let request = new TweeterRequest_1.loadMoreStatusItemsRequest(authToken, user, event.pageSize, lastItem);
     //let request = JSON.parse(JSON.stringify(event));
     console.log(request);

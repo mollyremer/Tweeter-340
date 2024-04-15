@@ -65,7 +65,7 @@ class FollowsDAO {
             };
             const output = yield this.client.send(new lib_dynamodb_1.GetCommand(params));
             return output.Item == undefined
-                ? undefined
+                ? null
                 : new tweeter_shared_1.Follow(tweeter_shared_1.User.fromJson(output.Item[this.follower]), tweeter_shared_1.User.fromJson(output.Item[this.followee]));
         });
     }

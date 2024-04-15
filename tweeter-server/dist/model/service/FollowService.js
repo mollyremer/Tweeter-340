@@ -16,7 +16,8 @@ class FollowService extends Service_1.Service {
     loadMoreFollowers(request) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(request);
-            let page = yield this.DAO.followsDAO.getPageOfFollowers(request.user.alias, request.pageSize, request.lastItem.alias);
+            let lastFollowerHandle = request.lastItem === null ? null : request.lastItem.alias;
+            let page = yield this.DAO.followsDAO.getPageOfFollowers(request.user.alias, request.pageSize, lastFollowerHandle);
             if ((page.values === null) || (page.hasMorePages === null)) {
                 throw new Error("[Internal Server Error] Invalid user or authToken");
             }
@@ -27,7 +28,8 @@ class FollowService extends Service_1.Service {
     loadMoreFollowees(request) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(request);
-            let page = yield this.DAO.followsDAO.getPageOfFollowees(request.user.alias, request.pageSize, request.lastItem.alias);
+            let lastFolloweeHandle = request.lastItem === null ? null : request.lastItem.alias;
+            let page = yield this.DAO.followsDAO.getPageOfFollowees(request.user.alias, request.pageSize, lastFolloweeHandle);
             if ((page.values === null) || (page.hasMorePages === null)) {
                 throw new Error("[Internal Server Error] Invalid user or authToken");
             }

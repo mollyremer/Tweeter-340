@@ -17,7 +17,13 @@ const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     let DAO = new DAOFactory_1.DAOFactory;
     let authToken = tweeter_shared_1.AuthToken.fromJson(JSON.stringify(event.authToken));
     let user = tweeter_shared_1.User.fromJson(JSON.stringify(event.user));
-    let lastItem = tweeter_shared_1.User.fromJson(JSON.stringify(event.lastItem));
+    let lastItem;
+    if (event.lastItem != null) {
+        lastItem = tweeter_shared_1.User.fromJson(JSON.stringify(event.lastItem));
+    }
+    else {
+        lastItem = null;
+    }
     let request = new tweeter_shared_1.loadMoreFollowsRequest(authToken, user, event.pageSize, lastItem);
     //let request = JSON.parse(JSON.stringify(event));
     console.log(request);

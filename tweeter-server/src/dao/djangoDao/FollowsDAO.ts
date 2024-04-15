@@ -57,21 +57,21 @@ export class FollowsDAO implements FollowsDAOInterface {
         }
     }
 
-    async get(follow: Follow): Promise<Follow | undefined> {
+    async get(follow: Follow): Promise<Follow | null> {
         const params = {
             TableName: this.tableName,
             Key: this.generateKey(follow),
         };
         const output = await this.client.send(new GetCommand(params));
         return output.Item == undefined
-            ? undefined
+            ? null
             : new Follow(
                 User.fromJson(output.Item[this.follower])!,
                 User.fromJson(output.Item[this.followee])!,
             )
     }
 
-    async getPageOfFollowees(followerHandle: string, pageSize: number, lastFolloweeHandle: string | undefined): Promise<DataPage<User>> {
+    async getPageOfFollowees(followerHandle: string, pageSize: number, lastFolloweeHandle: string | null): Promise<DataPage<User>> {
         const params = {
             KeyConditionExpression: this.followerHandle + " = :fr",
             ExpressionAttributeValues: {
@@ -99,7 +99,7 @@ export class FollowsDAO implements FollowsDAOInterface {
         return new DataPage<User>(items, hasMorePages);
     }
 
-    async getPageOfFollowers(followeeHandle: string, pageSize: number, lastFollowerHandle: string | undefined): Promise<DataPage<User>> {
+    async getPageOfFollowers(followeeHandle: string, pageSize: number, lastFollowerHandle: string | null): Promise<DataPage<User>> {
         const params = {
             KeyConditionExpression: this.followeeHandle + " = :fe",
             ExpressionAttributeValues: {

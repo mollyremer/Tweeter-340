@@ -9,7 +9,8 @@ export class FollowService extends Service{
         request: loadMoreFollowsRequest
     ): Promise<[User[], boolean]> {
         console.log(request);
-        let page: DataPage<User> | undefined = await this.DAO.followsDAO.getPageOfFollowers(request.user.alias, request.pageSize, request.lastItem!.alias);
+        let lastFollowerHandle = request.lastItem === null ? null : request.lastItem.alias;
+        let page: DataPage<User> | undefined = await this.DAO.followsDAO.getPageOfFollowers(request.user.alias, request.pageSize, lastFollowerHandle);
         if ((page.values === null) || (page.hasMorePages === null)) {
             throw new Error("[Internal Server Error] Invalid user or authToken");
         }
@@ -20,7 +21,8 @@ export class FollowService extends Service{
         request: loadMoreFollowsRequest
     ): Promise<[User[], boolean]> {
         console.log(request);
-        let page: DataPage<User> = await this.DAO.followsDAO.getPageOfFollowees(request.user.alias, request.pageSize, request.lastItem!.alias);
+        let lastFolloweeHandle = request.lastItem === null ? null : request.lastItem.alias;
+        let page: DataPage<User> = await this.DAO.followsDAO.getPageOfFollowees(request.user.alias, request.pageSize, lastFolloweeHandle);
         if ((page.values === null) || (page.hasMorePages === null)) {
             throw new Error("[Internal Server Error] Invalid user or authToken");
         }
