@@ -37,4 +37,5 @@ export interface FollowsDAOInterface {
     get(follow: Follow): Promise<Follow | null>
     getPageOfFollowees(followerHandle: string, pageSize: number, lastFolloweeHandle: string | null): Promise<DataPage<User>>;
     getPageOfFollowers(followeeHandle: string, pageSize: number, lastFollowerHandle: string | null): Promise<DataPage<User>>;
+    getAllFollowers(followeeHandle: string): Promise<string[]>;
 }

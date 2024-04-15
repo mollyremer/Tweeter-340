@@ -92,7 +92,7 @@ class FeedDAO {
             const hasMorePages = data.LastEvaluatedKey !== undefined;
             let userDAO = new UserDAO_1.UserDAO(this.client);
             (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((items) => __awaiter(this, void 0, void 0, function* () {
-                let user = yield userDAO.getUser(JSON.stringify(items[this.postAlias]));
+                let user = yield userDAO.getUser(items[this.postAlias]);
                 console.log("user " + user);
                 items.push(new tweeter_shared_1.Status(items[this.post], user, items[this.timestamp]));
             }));

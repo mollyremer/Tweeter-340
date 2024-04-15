@@ -49,7 +49,10 @@ class StatusService extends Service_1.Service {
                 throw new Error("[Internal Server Error] Invalid authToken");
             }
             yield this.DAO.storyDAO.put(new tweeter_shared_1.Status(request.newStatus.post, request.newStatus.user, request.newStatus.timestamp), request.newStatus.user.alias);
-            yield this.DAO.feedDAO.put(new tweeter_shared_1.Status(request.newStatus.post, request.newStatus.user, request.newStatus.timestamp), request.newStatus.user.alias);
+            let followeeAliases = yield this.DAO.followsDAO.getAllFollowers(request.newStatus.user.alias);
+            for (let followeeAlias in followeeAliases) {
+                yield this.DAO.feedDAO.put(new tweeter_shared_1.Status(request.newStatus.post, request.newStatus.user, request.newStatus.timestamp), followeeAlias);
+            }
             yield new Promise((f) => setTimeout(f, 2000));
         });
     }

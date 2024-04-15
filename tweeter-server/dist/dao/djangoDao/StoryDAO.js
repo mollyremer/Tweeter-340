@@ -86,9 +86,8 @@ class StoryDAO {
             const data = yield this.client.send(new lib_dynamodb_1.QueryCommand(params));
             const hasMorePages = data.LastEvaluatedKey !== undefined;
             let userDAO = new UserDAO_1.UserDAO(this.client);
+            let user = yield userDAO.getUser(authorAlias);
             (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((item) => __awaiter(this, void 0, void 0, function* () {
-                let user = yield userDAO.getUser(JSON.stringify(item[this.authorAlias]));
-                console.log("user" + user);
                 let status = new tweeter_shared_1.Status(item[this.post], user, item[this.timestamp]);
                 console.log(status);
                 items.push(status);

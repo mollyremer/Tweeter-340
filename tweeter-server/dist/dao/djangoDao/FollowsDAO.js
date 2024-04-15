@@ -69,6 +69,23 @@ class FollowsDAO {
                 : new tweeter_shared_1.Follow(tweeter_shared_1.User.fromJson(output.Item[this.follower]), tweeter_shared_1.User.fromJson(output.Item[this.followee]));
         });
     }
+    getAllFollowers(followerHandle) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            const params = {
+                KeyConditionExpression: this.followerHandle + " = :fr",
+                ExpressionAttributeValues: {
+                    ":fr": followerHandle,
+                },
+                TableName: this.tableName,
+                IndexName: this.indexName
+            };
+            const items = [];
+            const data = yield this.client.send(new lib_dynamodb_1.QueryCommand(params));
+            (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((item) => items.push(item[this.followeeHandle]));
+            return items;
+        });
+    }
     getPageOfFollowees(followerHandle, pageSize, lastFolloweeHandle) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
@@ -91,7 +108,7 @@ class FollowsDAO {
             const items = [];
             const data = yield this.client.send(new lib_dynamodb_1.QueryCommand(params));
             const hasMorePages = data.LastEvaluatedKey !== undefined;
-            (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((item) => items.push(tweeter_shared_1.User.fromJson(JSON.stringify(item[this.followee]))));
+            (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((item) => items.push(tweeter_shared_1.User.fromJson(item[this.followee])));
             return new DataPage_1.DataPage(items, hasMorePages);
         });
     }
@@ -111,14 +128,14 @@ class FollowsDAO {
                 ExclusiveStartKey: lastFollowerHandle === null
                     ? undefined
                     : {
-                        [this.followerHandle]: lastFollowerHandle,
                         [this.followeeHandle]: followeeHandle,
+                        [this.followerHandle]: lastFollowerHandle,
                     },
             };
             const items = [];
             const data = yield this.client.send(new lib_dynamodb_1.QueryCommand(params));
             const hasMorePages = data.LastEvaluatedKey !== undefined;
-            (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((item) => items.push(tweeter_shared_1.User.fromJson(JSON.stringify(item[this.follower]))));
+            (_a = data.Items) === null || _a === void 0 ? void 0 : _a.forEach((item) => items.push(tweeter_shared_1.User.fromJson(item[this.follower])));
             return new DataPage_1.DataPage(items, hasMorePages);
         });
     }

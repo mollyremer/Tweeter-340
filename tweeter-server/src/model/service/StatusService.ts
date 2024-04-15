@@ -42,7 +42,12 @@ export class StatusService extends Service{
         }
 
         await this.DAO.storyDAO.put(new Status(request.newStatus.post, request.newStatus.user, request.newStatus.timestamp), request.newStatus.user.alias);
-        await this.DAO.feedDAO.put(new Status(request.newStatus.post, request.newStatus.user, request.newStatus.timestamp), request.newStatus.user.alias);
+        
+        let followeeAliases: string[] = await this.DAO.followsDAO.getAllFollowers(request.newStatus.user.alias);
+        for (let followeeAlias in followeeAliases){
+            await this.DAO.feedDAO.put(new Status(request.newStatus.post, request.newStatus.user, request.newStatus.timestamp), followeeAlias);
+        }
+        
         await new Promise((f) => setTimeout(f, 2000));
     };
 }

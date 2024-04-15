@@ -88,7 +88,7 @@ export class FeedDAO implements StatusDAOInterface {
         const hasMorePages = data.LastEvaluatedKey !== undefined;
         let userDAO = new UserDAO(this.client);
         data.Items?.forEach(async (items) => {
-            let user = await userDAO.getUser(JSON.stringify(items[this.postAlias]));
+            let user = await userDAO.getUser(items[this.postAlias]);
             console.log("user " + user);
             items.push(new Status(items[this.post], user!, items[this.timestamp]));
         }

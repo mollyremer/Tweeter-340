@@ -16,7 +16,7 @@ const DAOFactory_1 = require("../dao/djangoDao/DAOFactory");
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     let DAO = new DAOFactory_1.DAOFactory;
     let authToken = tweeter_shared_1.AuthToken.fromJson(JSON.stringify(event.authToken));
-    let alias = JSON.stringify(event.alias);
+    let alias = event.alias;
     let request = new tweeter_shared_1.GetUserRequest(authToken, alias);
     //let request = JSON.parse(JSON.stringify(event));
     console.log(request);

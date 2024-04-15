@@ -71,6 +71,27 @@ export class FollowsDAO implements FollowsDAOInterface {
             )
     }
 
+    async getAllFollowers(followerHandle: string): Promise<string[]>{
+        const params = {
+            KeyConditionExpression: this.followerHandle + " = :fr",
+            ExpressionAttributeValues: {
+                ":fr": followerHandle,
+            },
+            TableName: this.tableName,
+            IndexName: this.indexName
+        };
+
+        const items: string[] = [];
+        const data = await this.client.send(new QueryCommand(params));
+        data.Items?.forEach((item) =>
+            items.push(
+                item[this.followeeHandle]
+            )
+        );
+
+        return items;
+    }
+
     async getPageOfFollowees(followerHandle: string, pageSize: number, lastFolloweeHandle: string | null): Promise<DataPage<User>> {
         console.log(followerHandle);
         console.log(lastFolloweeHandle);
@@ -95,7 +116,7 @@ export class FollowsDAO implements FollowsDAOInterface {
         const hasMorePages = data.LastEvaluatedKey !== undefined;
         data.Items?.forEach((item) =>
             items.push(
-                User.fromJson(JSON.stringify(item[this.followee]))!
+                User.fromJson(item[this.followee])!
             )
         );
 
@@ -117,8 +138,8 @@ export class FollowsDAO implements FollowsDAOInterface {
                 lastFollowerHandle === null
                     ? undefined
                     : {
-                        [this.followerHandle]: lastFollowerHandle,
                         [this.followeeHandle]: followeeHandle,
+                        [this.followerHandle]: lastFollowerHandle,
                     },
         };
 
@@ -127,7 +148,7 @@ export class FollowsDAO implements FollowsDAOInterface {
         const hasMorePages = data.LastEvaluatedKey !== undefined;
         data.Items?.forEach((item) => 
             items.push(
-                User.fromJson(JSON.stringify(item[this.follower]))!
+                User.fromJson(item[this.follower])!
             )
         );
 

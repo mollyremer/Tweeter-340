@@ -84,7 +84,7 @@ export class StoryDAO implements StatusDAOInterface{
         const hasMorePages = data.LastEvaluatedKey !== undefined;
         
         let userDAO = new UserDAO(this.client);
-        let user = await userDAO.getUser(JSON.stringify(authorAlias));
+        let user = await userDAO.getUser(authorAlias);
             
         data.Items?.forEach(async (item) => {
             let status = new Status(item[this.post], user!, item[this.timestamp]);
