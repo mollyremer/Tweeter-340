@@ -35,8 +35,7 @@ class UserService extends Service_1.Service {
     logout(request) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(request);
-            let authToken = tweeter_shared_1.AuthToken.fromJson(JSON.stringify(request.authToken));
-            yield this.DAO.authDAO.delete(authToken.token);
+            yield this.DAO.authDAO.delete(request.authToken.token);
             yield new Promise((res) => setTimeout(res, 1000));
         });
     }
@@ -53,9 +52,8 @@ class UserService extends Service_1.Service {
     ;
     getFollowerCount(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            let user = tweeter_shared_1.User.fromJson(JSON.stringify(request.user));
-            console.log("requested count for" + user);
-            let count = yield this.DAO.userDAO.getFollowerCount(user.alias);
+            console.log("requested count for" + request.user);
+            let count = yield this.DAO.userDAO.getFollowerCount(request.user.alias);
             console.log("followers =" + count);
             return count;
         });
@@ -63,9 +61,8 @@ class UserService extends Service_1.Service {
     ;
     getFolloweesCount(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            let user = tweeter_shared_1.User.fromJson(JSON.stringify(request.user));
-            console.log("requested count for" + user.alias);
-            let count = yield this.DAO.userDAO.getFolloweeCount(user.alias);
+            console.log("requested count for" + request.user.alias);
+            let count = yield this.DAO.userDAO.getFolloweeCount(request.user.alias);
             console.log("followees =" + count);
             return count;
         });

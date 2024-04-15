@@ -9,7 +9,8 @@ export const handler = async (event: followToggleRequest): Promise<FollowToggleR
     let currentUser = User.fromJson(JSON.stringify(event.currentUser));
     let userToFollow = User.fromJson(JSON.stringify(event.userToFollow));
     let authToken = AuthToken.fromJson(JSON.stringify(event.authToken));
-    let request = new followToggleRequest(currentUser!, userToFollow!, authToken!);    console.log(request);
+    let request = new followToggleRequest(currentUser!, userToFollow!, authToken!);    
+    console.log(request);
     let [followerCount, followeeCount] = await new FollowService(DAO).follow(request);
     console.log(followerCount);
     console.log(followeeCount);

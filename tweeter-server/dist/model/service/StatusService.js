@@ -16,15 +16,11 @@ class StatusService extends Service_1.Service {
     loadMoreFeedItems(request) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(request);
-            let user = tweeter_shared_1.User.fromJson(JSON.stringify(request.user));
-            console.log(user);
-            if (user === null) {
+            if (request.user === null) {
                 throw new Error("[Bad Request] Unknown user");
             }
-            let lastItem = tweeter_shared_1.Status.fromJson(JSON.stringify(request.lastItem));
-            let lastItemUser = tweeter_shared_1.User.fromJson(JSON.stringify(lastItem === null || lastItem === void 0 ? void 0 : lastItem.user));
             let statuses = [];
-            let page = yield this.DAO.feedDAO.getPage(user.alias, request.pageSize, lastItem.timestamp, lastItemUser.alias);
+            let page = yield this.DAO.feedDAO.getPage(request.user.alias, request.pageSize, request.lastItem.timestamp, request.lastItem.user.alias);
             if (((page.values) === null) || (page.hasMorePages === null)) {
                 throw new Error("[Internal Server Error] Invalid user or authToken");
             }
@@ -43,15 +39,11 @@ class StatusService extends Service_1.Service {
     loadMoreStoryItems(request) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(request);
-            let user = tweeter_shared_1.User.fromJson(JSON.stringify(request.user));
-            console.log(user);
-            if (user === null) {
+            if (request.user === null) {
                 throw new Error("[Bad Request] Unknown user");
             }
-            let lastItem = tweeter_shared_1.Status.fromJson(JSON.stringify(request.lastItem));
-            let lastItemUser = tweeter_shared_1.User.fromJson(JSON.stringify(lastItem === null || lastItem === void 0 ? void 0 : lastItem.user));
             let statuses = [];
-            let page = yield this.DAO.feedDAO.getPage(user.alias, request.pageSize, lastItem.timestamp, lastItemUser.alias);
+            let page = yield this.DAO.feedDAO.getPage(request.user.alias, request.pageSize, request.lastItem.timestamp, request.lastItem.user.alias);
             if ((page.values === null) || (page.hasMorePages === null)) {
                 throw new Error("[Internal Server Error] Invalid user or authToken");
             }
@@ -70,15 +62,12 @@ class StatusService extends Service_1.Service {
     postStatus(request) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(request);
-            let requestAuthToken = tweeter_shared_1.AuthToken.fromJson(JSON.stringify(request.authToken));
-            let authToken = yield this.DAO.authDAO.get(requestAuthToken.token);
+            let authToken = yield this.DAO.authDAO.get(request.authToken.token);
             if (authToken === null) {
                 throw new Error("[Internal Server Error] Invalid authToken");
             }
-            let userInsideStatus = tweeter_shared_1.User.fromJson(JSON.stringify(request.newStatus.user));
-            let newStatus = tweeter_shared_1.Status.fromJson(JSON.stringify(request.newStatus));
-            yield this.DAO.storyDAO.put(new tweeter_shared_1.Status(newStatus.post, userInsideStatus, newStatus.timestamp), newStatus.user.alias);
-            yield this.DAO.feedDAO.put(new tweeter_shared_1.Status(newStatus.post, userInsideStatus, newStatus.timestamp), newStatus.user.alias);
+            yield this.DAO.storyDAO.put(new tweeter_shared_1.Status(request.newStatus.post, request.newStatus.user, request.newStatus.timestamp), request.newStatus.user.alias);
+            yield this.DAO.feedDAO.put(new tweeter_shared_1.Status(request.newStatus.post, request.newStatus.user, request.newStatus.timestamp), request.newStatus.user.alias);
             yield new Promise((f) => setTimeout(f, 2000));
         });
     }

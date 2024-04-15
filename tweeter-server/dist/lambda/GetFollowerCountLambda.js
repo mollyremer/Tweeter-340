@@ -16,7 +16,10 @@ const DAOFactory_1 = require("../dao/djangoDao/DAOFactory");
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     let DAO = new DAOFactory_1.DAOFactory;
     console.log(event);
-    let request = JSON.parse(JSON.stringify(event));
+    let authToken = tweeter_shared_1.AuthToken.fromJson(JSON.stringify(event.authToken));
+    let user = tweeter_shared_1.User.fromJson(JSON.stringify(event.user));
+    let request = new tweeter_shared_1.GetFollowerCountRequest(authToken, user);
+    //let request = JSON.parse(JSON.stringify(event));
     console.log(request);
     let response = yield new UserService_1.UserService(DAO).getFollowerCount(request);
     console.log(response);

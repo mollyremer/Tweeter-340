@@ -1,4 +1,4 @@
-import { AuthToken, PostStatusRequest, Status, TweeterResponse } from "tweeter-shared";
+import { AuthToken, PostStatusRequest, Status, TweeterResponse, User } from "tweeter-shared";
 import { UserService } from "../model/service/UserService";
 import { StatusService } from "../model/service/StatusService";
 import { DAOFactory } from "../dao/djangoDao/DAOFactory";
@@ -9,7 +9,11 @@ export const handler = async (event: PostStatusRequest): Promise<TweeterResponse
     console.log(event);
 
     let authToken = AuthToken.fromJson(JSON.stringify(event.authToken));
-    let newStatus = Status.fromJson(JSON.stringify(event.newStatus));
+
+
+    let tempNewStatus = Status.fromJson(JSON.stringify(event.newStatus));
+    let userInsideStatus = User.fromJson(JSON.stringify(tempNewStatus!.user));
+    let newStatus = new Status(tempNewStatus!.post, userInsideStatus!, tempNewStatus!.timestamp);
 
     let request = new PostStatusRequest(authToken!, newStatus!);
     //let request = JSON.parse(JSON.stringify(event));

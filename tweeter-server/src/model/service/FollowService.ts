@@ -9,10 +9,7 @@ export class FollowService extends Service{
         request: loadMoreFollowsRequest
     ): Promise<[User[], boolean]> {
         console.log(request);
-        let user: User = User.fromJson(JSON.stringify(request.user))!;
-        let lastItem: User | null = request.lastItem ? null : User.fromJson(JSON.stringify(request.lastItem))!;
-        console.log(user);
-        let page: DataPage<User> | undefined = await this.DAO.followsDAO.getPageOfFollowers(user.alias, request.pageSize, lastItem!.alias);
+        let page: DataPage<User> | undefined = await this.DAO.followsDAO.getPageOfFollowers(request.user.alias, request.pageSize, request.lastItem!.alias);
         if ((page.values === null) || (page.hasMorePages === null)) {
             throw new Error("[Internal Server Error] Invalid user or authToken");
         }
@@ -23,10 +20,7 @@ export class FollowService extends Service{
         request: loadMoreFollowsRequest
     ): Promise<[User[], boolean]> {
         console.log(request);
-        let user: User = User.fromJson(JSON.stringify(request.user))!;
-        let lastItem: User | null = request.lastItem ? null : User.fromJson(JSON.stringify(request.lastItem))!;
-        console.log(user);
-        let page: DataPage<User> = await this.DAO.followsDAO.getPageOfFollowees(user.alias, request.pageSize, lastItem!.alias);
+        let page: DataPage<User> = await this.DAO.followsDAO.getPageOfFollowees(request.user.alias, request.pageSize, request.lastItem!.alias);
         if ((page.values === null) || (page.hasMorePages === null)) {
             throw new Error("[Internal Server Error] Invalid user or authToken");
         }
@@ -36,16 +30,12 @@ export class FollowService extends Service{
     public async follow(
         request: followToggleRequest
     ): Promise<[number, number]> {
-        let authToken = AuthToken.fromJson(JSON.stringify(request.authToken));
-        let currentUser = User.fromJson(JSON.stringify(request.currentUser));
-        let userToFollow = User.fromJson(JSON.stringify(request.userToFollow));
-
-        await this.validateAuthToken(authToken!);
+        await this.validateAuthToken(request.authToken);
         console.log("putting a follow");
-        await this.DAO.followsDAO.put(new Follow(currentUser!, userToFollow!));
+        await this.DAO.followsDAO.put(new Follow(request.currentUser, request.userToFollow));
         console.log("updating follower/ee counts");
-        let followerCount = await this.DAO.userDAO.updateFollowerCount(userToFollow!.alias, 1);
-        let followeeCount = await this.DAO.userDAO.updateFolloweeCount(currentUser!.alias, 1);
+        let followerCount = await this.DAO.userDAO.updateFollowerCount(request.userToFollow.alias, 1);
+        let followeeCount = await this.DAO.userDAO.updateFolloweeCount(request.currentUser.alias, 1);
         console.log(followerCount);
         console.log(followeeCount);
         await new Promise((f) => setTimeout(f, 2000));
@@ -55,16 +45,12 @@ export class FollowService extends Service{
     public async unfollow(
         request: followToggleRequest
     ): Promise<[number, number]> {
-        let authToken = AuthToken.fromJson(JSON.stringify(request.authToken));
-        let currentUser = User.fromJson(JSON.stringify(request.currentUser));
-        let userToFollow = User.fromJson(JSON.stringify(request.userToFollow));
-
-        await this.validateAuthToken(authToken!);
+        await this.validateAuthToken(request.authToken);
         console.log("removing a follow");
-        await this.DAO.followsDAO.delete(new Follow(currentUser!, userToFollow!));
+        await this.DAO.followsDAO.delete(new Follow(request.currentUser, request.userToFollow));
         console.log("updating follower/ee counts");
-        let followerCount = await this.DAO.userDAO.updateFollowerCount(userToFollow!.alias, -1);
-        let followeeCount = await this.DAO.userDAO.updateFolloweeCount(currentUser!.alias, -1);
+        let followerCount = await this.DAO.userDAO.updateFollowerCount(request.userToFollow.alias, -1);
+        let followeeCount = await this.DAO.userDAO.updateFolloweeCount(request.currentUser.alias, -1);
         console.log(followerCount);
         console.log(followeeCount);
         await new Promise((f) => setTimeout(f, 2000));
@@ -74,12 +60,8 @@ export class FollowService extends Service{
     public async getIsFollowerStatus(
         request: GetIsFollowerStatusRequest
     ): Promise<boolean> {
-        let user = User.fromJson(JSON.stringify(request.user));
-        let selectedUser = User.fromJson(JSON.stringify(request.selectedUser));
-        let authToken = AuthToken.fromJson(JSON.stringify(request.authToken));
-
-        await this.validateAuthToken(authToken!);
-        let isFollower = await this.DAO.followsDAO.get(new Follow(user!, selectedUser!));
+        await this.validateAuthToken(request.authToken);
+        let isFollower = await this.DAO.followsDAO.get(new Follow(request.user, request.selectedUser));
 
         if (isFollower === null) {
             throw new Error("[Internal Server Error] Unknown error in getIsFollowerStatus")

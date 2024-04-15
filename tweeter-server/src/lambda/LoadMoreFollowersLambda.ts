@@ -7,7 +7,13 @@ export const handler = async (event: loadMoreFollowsRequest): Promise<GetPageOfU
 
     let authToken = AuthToken.fromJson(JSON.stringify(event.authToken));
     let user = User.fromJson(JSON.stringify(event.user));
-    let lastItem = User.fromJson(JSON.stringify(event.lastItem));
+
+    let lastItem: User | null;
+    if (event.lastItem != null){
+        lastItem = User.fromJson(JSON.stringify(event.lastItem));
+    } else {
+        lastItem = null;
+    }
 
     let request = new loadMoreFollowsRequest(authToken!, user!, event.pageSize, lastItem);
     //let request = JSON.parse(JSON.stringify(event));

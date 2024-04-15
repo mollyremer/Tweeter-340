@@ -16,7 +16,13 @@ const DAOFactory_1 = require("../dao/djangoDao/DAOFactory");
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     let DAO = new DAOFactory_1.DAOFactory;
     console.log(event);
-    let request = JSON.parse(JSON.stringify(event));
+    let authToken = tweeter_shared_1.AuthToken.fromJson(JSON.stringify(event.authToken));
+    let user = tweeter_shared_1.User.fromJson(JSON.stringify(event.user));
+    let tempLastItem = tweeter_shared_1.Status.fromJson(JSON.stringify(event.lastItem));
+    let userInsideStatus = tweeter_shared_1.User.fromJson(JSON.stringify(tempLastItem.user));
+    let lastItem = new tweeter_shared_1.Status(tempLastItem.post, userInsideStatus, tempLastItem.timestamp);
+    let request = new tweeter_shared_1.loadMoreStatusItemsRequest(authToken, user, event.pageSize, lastItem);
+    //let request: loadMoreStatusItemsRequest = JSON.parse(JSON.stringify(event));
     console.log(request);
     let [response, hasMoreItems] = yield new StatusService_1.StatusService(DAO).loadMoreFeedItems(request);
     console.log(response);

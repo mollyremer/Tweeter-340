@@ -46,9 +46,8 @@ export class UserService extends Service{
     public async getFollowerCount(
         request: GetFollowerCountRequest
     ): Promise<number> {
-        let user = User.fromJson(JSON.stringify(request.user));
-        console.log("requested count for" + user);
-        let count = await this.DAO.userDAO.getFollowerCount(user!.alias);
+        console.log("requested count for" + request.user);
+        let count = await this.DAO.userDAO.getFollowerCount(request.user.alias);
         console.log("followers =" + count);
         return count;
     };
@@ -56,9 +55,8 @@ export class UserService extends Service{
     public async getFolloweesCount(
         request: GetFolloweesCountRequest
     ): Promise<number> {
-        let user = User.fromJson(JSON.stringify(request.user));
-        console.log("requested count for" + user!.alias);
-        let count = await this.DAO.userDAO.getFolloweeCount(user!.alias);
+        console.log("requested count for" + request.user.alias);
+        let count = await this.DAO.userDAO.getFolloweeCount(request.user.alias);
         console.log("followees =" + count);
         return count;
     };

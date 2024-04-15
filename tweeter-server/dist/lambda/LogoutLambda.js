@@ -15,7 +15,8 @@ const UserService_1 = require("../model/service/UserService");
 const DAOFactory_1 = require("../dao/djangoDao/DAOFactory");
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     let DAO = new DAOFactory_1.DAOFactory;
-    let request = JSON.parse(JSON.stringify(event));
+    let authToken = tweeter_shared_1.AuthToken.fromJson(JSON.stringify(event.authToken));
+    let request = new tweeter_shared_1.LogoutRequest(authToken);
     console.log(request);
     yield new UserService_1.UserService(DAO).logout(request);
     return new tweeter_shared_1.TweeterResponse(true);

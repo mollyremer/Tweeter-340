@@ -10,7 +10,15 @@ export const handler = async (event: loadMoreStatusItemsRequest): Promise<GetPag
 
     let authToken = AuthToken.fromJson(JSON.stringify(event.authToken));
     let user = User.fromJson(JSON.stringify(event.user));
-    let lastItem = Status.fromJson(JSON.stringify(event.lastItem));
+    
+    let lastItem: Status | null;
+    if (event.lastItem != null) {
+        let tempLastItem = Status.fromJson(JSON.stringify(event.lastItem));
+        let userInsideStatus = User.fromJson(JSON.stringify(tempLastItem!.user));
+        lastItem = new Status(tempLastItem!.post, userInsideStatus!, tempLastItem!.timestamp);
+    } else {
+        lastItem = null;
+    }
 
     let request = new loadMoreStatusItemsRequest(authToken!, user!, event.pageSize, lastItem);
     //let request = JSON.parse(JSON.stringify(event));
