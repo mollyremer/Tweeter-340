@@ -6,7 +6,7 @@ export const handler = async (event: GetUserRequest): Promise<GetUserResponse> =
     let DAO: DAOFactory = new DAOFactory;
 
     let authToken = AuthToken.fromJson(JSON.stringify(event.authToken));
-    let alias = JSON.stringify(event.alias);
+    let alias = event.alias;
 
     let request = new GetUserRequest(authToken!, alias);
 
