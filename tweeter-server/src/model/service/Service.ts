@@ -33,6 +33,7 @@ export class Service {
         return user;
     }
 
+    //use anytime an authtoken is in the request
     public async validateAuthToken(
         authToken: AuthToken
     ) {
