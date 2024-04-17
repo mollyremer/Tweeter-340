@@ -34,6 +34,7 @@ class Service {
             return user;
         });
     }
+    //use anytime an authtoken is in the request
     validateAuthToken(authToken) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log("validating auth token...");

@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.StatusService = void 0;
 const tweeter_shared_1 = require("tweeter-shared");
 const Service_1 = require("./Service");
+const SqsClient_1 = require("../../SqsClient");
 class StatusService extends Service_1.Service {
     loadMoreFeedItems(request) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -43,17 +44,23 @@ class StatusService extends Service_1.Service {
     ;
     postStatus(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(request);
-            let authToken = yield this.DAO.authDAO.get(request.authToken.token);
-            if (authToken === null) {
-                throw new Error("[Internal Server Error] Invalid authToken");
+            // let followeeAliases: string[] = await this.DAO.followsDAO.getAllFollowers(request.newStatus.user.alias);
+            // for (let followeeAlias in followeeAliases){
+            //     await this.DAO.feedDAO.put(new Status(request.newStatus.post, request.newStatus.user, request.newStatus.timestamp), followeeAlias);
+            // }
+            // await new Promise((f) => setTimeout(f, 2000));
+            yield this.validateAuthToken(request.authToken);
+            let status = new tweeter_shared_1.Status(request.newStatus.post, request.newStatus.user, request.newStatus.timestamp);
+            yield this.DAO.storyDAO.put(status, request.newStatus.user.alias);
+            console.log("put story into table");
+            console.log("getting followeeCount for " + request.newStatus.user.alias);
+            let followeeCount = yield this.DAO.userDAO.getFolloweeCount(request.newStatus.user.alias);
+            console.log("followeeCount is " + followeeCount);
+            console.log("sending status json" + status.toJson());
+            if (followeeCount > 0) {
+                let sqsCommunicator = new SqsClient_1.SqsClientCommunicator();
+                yield sqsCommunicator.sendMessage("PostsQ", status.toJson());
             }
-            yield this.DAO.storyDAO.put(new tweeter_shared_1.Status(request.newStatus.post, request.newStatus.user, request.newStatus.timestamp), request.newStatus.user.alias);
-            let followeeAliases = yield this.DAO.followsDAO.getAllFollowers(request.newStatus.user.alias);
-            for (let followeeAlias in followeeAliases) {
-                yield this.DAO.feedDAO.put(new tweeter_shared_1.Status(request.newStatus.post, request.newStatus.user, request.newStatus.timestamp), followeeAlias);
-            }
-            yield new Promise((f) => setTimeout(f, 2000));
         });
     }
     ;

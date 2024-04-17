@@ -22,7 +22,7 @@ class UserDAO {
         this.firstName = "firstName";
         this.lastName = "lastName";
         this.alias = "alias";
-        this.imageUrl = "string";
+        this.imageUrl = "imageUrl";
         this.password = "password";
         this.salt = "salt";
         this.followerCount = "followerCount";

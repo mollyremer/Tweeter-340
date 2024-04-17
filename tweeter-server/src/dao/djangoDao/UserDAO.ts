@@ -16,7 +16,7 @@ export class UserDAO implements UserDAOInterface {
     readonly firstName = "firstName";
     readonly lastName = "lastName"
     readonly alias = "alias";
-    readonly imageUrl = "string";
+    readonly imageUrl = "imageUrl";
     readonly password = "password";
     readonly salt = "salt"
     readonly followerCount = "followerCount";
